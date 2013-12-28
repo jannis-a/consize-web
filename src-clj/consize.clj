@@ -1,1 +1,1 @@
-../resources/consize/consize.clj
+../resources/public/consize/consize.clj

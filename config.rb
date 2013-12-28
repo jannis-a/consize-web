@@ -2,8 +2,7 @@ require 'compass-normalize'
 
 http_path = "/"
 css_dir = "resources/public/css"
-sass_dir = "resources/compass"
-images_dir = "resources/public/img"
+sass_dir = "resources/public/compass"
 javascripts_dir = "resources/public/js"
 
 preferred_syntax = :sass

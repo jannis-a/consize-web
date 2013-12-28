@@ -8,11 +8,11 @@
   :cljsbuild {
     :crossovers [consize]
     :builds [{
-      :source-paths ["src-clj" "src-cljs" "test-cljs"]
+      :source-paths ["src-clj" "src-cljs"]
 			:compiler {
         :output-to "resources/public/js/consize.js"
         :optimizations :advanced
         :pretty-print true}}]}
   :hooks [leiningen.cljsbuild]
-	:source-paths ["src-clj" "src-cljs" "test-cljs"]
+	:source-paths ["src-clj"]
   :min-lein-version "2.0.0")
