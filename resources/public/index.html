@@ -1,40 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Consize</title>
+	<title>Consize</title>
 
-    <script src="js/jquery-1.8.3.min.js"></script>
-    <script src="../jq-console/jqconsole.min.js"></script>
-    <script src="../codemirror/lib/codemirror.js"></script>
-    <script src="../codemirror/mode/clojure/clojure.js"></script>
-    <script src="../codemirror/addon/edit/matchbrackets.js"></script>
+	<script src="js/jquery-1.8.3.min.js"></script>
+	<script src="../jq-console/jqconsole.min.js"></script>
+	<script src="../codemirror/lib/codemirror.js"></script>
+	<script src="../codemirror/mode/clojure/clojure.js"></script>
+	<script src="../codemirror/addon/edit/matchbrackets.js"></script>
 
-    <script src="js/out/goog/base.js"></script>
-    <script src="js/consize.js"></script>
-    <script>goog.require('consize.web');</script>
+	<!--
+	<script src="js/out/goog/base.js"></script>
+	<script src="js/consize.js"></script>
+	<script>goog.require('consize.web');</script>
+	-->
 
-    <link href="css/screen.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="../codemirror/lib/codemirror.css">
+	<link href="css/screen.css" rel="stylesheet"/>
+	<link rel="stylesheet" href="../codemirror/lib/codemirror.css">
 </head>
 <body>
 <div id="layout">
-    <h1>Consize</h1>
-    <div id="repl">
-        <h2>REPL</h2>
-        <div id="console"></div>
-    </div>
-    <div id="filesystem">
-        <h2>Editor</h2>
-        <textarea class="editor" id="editor">;; Develop your clojurescript program here.
-            ;; Ctrl+E/Cmd+E evaluates file in the REPL.</textarea>
-        <!--
-        <h2>Filesystem</h2>
-        <input id="file" name="file" type="Text"/>
-        <input id="content" name="content" type="text"/>
-        <input id="add" name="add" value="Add" type="button"/>
-        <ul id="files"></ul>
-        -->
-    </div>
+	<h1>Consize</h1>
+	<div id="repl">
+		<h2>REPL</h2>
+		<div id="console"></div>
+	</div>
+	<div id="filesystem">
+		<h2>Editor</h2>
+		<textarea class="editor" id="editor">;; Develop your clojurescript program here.
+			;; Ctrl+E/Cmd+E evaluates file in the REPL.</textarea>
+		<!--
+		<h2>Filesystem</h2>
+		<input id="file" name="file" type="Text"/>
+		<input id="content" name="content" type="text"/>
+		<input id="add" name="add" value="Add" type="button"/>
+		<ul id="files"></ul>
+		-->
+	</div>
 </div>
 </body>
 </html>
