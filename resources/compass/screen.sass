@@ -51,13 +51,14 @@ header
 				padding-left: 0
 
 #repl
+	background: white
+	height: $height
 	#console
-		background: white
-		height: $height
-		position: relative
+		max-height: $height - 32px - 3*$pad
 		white-space: pre-wrap
 		width: 100%
 		word-wrap: break-word
+		overflow-y: auto
 	#prompt
 		width: 100%
 

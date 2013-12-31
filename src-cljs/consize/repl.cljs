@@ -39,11 +39,12 @@
 	(repl/eval-print expr))
 
 (defn init
-	[console-selector prompt-selector]
+	[console-selector & prompt-selector]
 	(repl/init)
 
 	(let [console (getElementById console-selector)
-				prompt (getElementById prompt-selector)]
+				prompt (getElementById ;prompt-selector
+								 "prompt")]
 
 		(set! *out* #(repl-print console % nil))
 		(set! *rtn* #(repl-print console % "return"))

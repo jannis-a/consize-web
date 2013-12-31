@@ -34,7 +34,8 @@ header nav li label { padding: 14px; }
 #content > input[type='radio'] + section { float: left; padding-left: 21px; width: 50%; }
 #content > input[type='radio'] + section:first-of-type { padding-left: 0; }
 
-#repl #console { background: white; height: 400px; position: relative; white-space: pre-wrap; width: 100%; word-wrap: break-word; }
+#repl { background: white; height: 400px; }
+#repl #console { max-height: 347px; white-space: pre-wrap; width: 100%; word-wrap: break-word; overflow-y: auto; }
 #repl #prompt { width: 100%; }
 
 #filesystem { *zoom: 1; }

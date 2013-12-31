@@ -30,3 +30,9 @@
 	(doseq [i (dom v)]
 		(.appendChild parent i))
 	parent)
+
+(defn- map->js [m]
+	(let [out (js-obj)]
+		(doseq [[k v] m]
+			(aset out (name k) v))
+		out))

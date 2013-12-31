@@ -18,7 +18,7 @@
 (set! (.-onload js/window) (fn[]
 	(fs/init "files")
 
-	(let [console (repl/init "console" "prompt")
+	(let [console (repl/init "console"); "prompt")
 				editor (fs/editor "editor")]
 		(repl/register-shortcuts console
 			{"E" #(this-as this-console
