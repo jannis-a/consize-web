@@ -1,67 +1,46 @@
 (ns consize.repl
-	(:require [cljs.repl :as repl])
-	(:use [consize.base :only (getElementById, command-prefix, dom-append)]))
+	(:require [cljs.repl :as repl]
+						[clojure.browser.dom :as dom]))
 
-(defn repl-print [log text cls]
-	(doseq [line (.split (str text) #"\n")]
-		(dom-append log
-								[:div {:class (str "cg "
-				(when cls
-					(str " " cls)))}
-								 line]))
-	(set! (.-scrollTop log) (.-scrollHeight log)))
+(defn- print-eval [buffer eval type]
+	(doseq [line (.split (str eval) #"\n")]
+		(if (= type "error")
+			(dom/log line)
+			(dom/append buffer (dom/element [:li {:class (when type (str type))} line]))))
+	(set! (.-scrollTop buffer) (.-scrollHeight buffer)))
 
-(defn postexpr [console expr]
-	(dom-append console
-							[:table
-							 [:tbody
-								[:tr
-								 [:td {:class "cg"} (repl/prompt)]
-								 [:td (.replace expr #"\n$" "")]]]]))
+(defn- print-expr [buffer expr]
+	(dom/append buffer
+							(dom/element :li
+													 [:span {:class "ns"}
+														(repl/prompt)]
+													 (.replace expr #"\n$" ""))))
 
-
-(defn- map->js [m]
-	(let [out (js-obj)]
-		(doseq [[k v] m]
-			(aset out (name k) v))
-		out))
-
-(defn register-shortcuts [editor key-map]
-	(let [js-key-map
-				(->> (for [[k callback] key-map]
-						 		[(str command-prefix "-" k) callback])
-						 (into {})
-						 map->js)]
-		(.addEventListener js/document editor js-key-map)))
-
-(defn pep [console expr]
-	(postexpr console expr)
+(defn post-expr [buffer expr]
+	(print-expr buffer expr)
 	(repl/eval-print expr))
 
-(defn init
-	[console-selector & prompt-selector]
+(defn init [id]
 	(repl/init)
 
-	(let [console (getElementById console-selector)
-				prompt (getElementById ;prompt-selector
-								 "prompt")]
+	(let [o (fn [e] (dom/get-element (str id e)))]
+		(let [buffer (o "-buffer")
+					input (o "-input")
+					;ns (o "-ns")
+					]
+			(set! *out* #(print-eval buffer % nil))
+			(set! *rtn* #(print-eval buffer % "return"))
+			(set! *err* #(print-eval buffer % "error"))
+			(set! *print-fn* #(*out* %1))
 
-		(set! *out* #(repl-print console % nil))
-		(set! *rtn* #(repl-print console % "return"))
-		(set! *err* #(repl-print console % "error"))
-		(set! *print-fn* #(*out* %1))
+			(set! (.-onkeypress input)
+						(fn [ev]
+							(when (== (.-keyCode (or ev event)) 13)
+								(let [expr (dom/get-value input)]
+									(if (repl/complete-form? expr)
+										(do
+											(post-expr buffer expr)
+											;(dom/set-text ns (repl/prompt))
+											(js/setTimeout #(set! (.-value input) "") 0)))))))
 
-		(println ";; Consize Web REPL")
-
-		(set! (.-onkeypress prompt)
-			(fn [ev]
-				(when (== (.-keyCode (or ev event)) 13)
-					(let [line (.-value prompt)]
-						(if (repl/complete-form? line)
-							(do
-								(pep console line)
-								(js/setTimeout #(set! (.-value prompt) "") 0)
-								;(set! (.-innerText (getElementById  "ns")) (repl/prompt))
-								))))))
-
-		(.focus prompt)))
+			(.focus input))))

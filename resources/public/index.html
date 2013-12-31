@@ -1,45 +1,178 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Consize as Web App</title>
+	<title>Consize as Web App</title>
 
-    <script src="js/codemirror.js"></script>
-    <script src="js/codemirror/mode/clojure.js"></script>
-    <script src="js/codemirror/matchbrackets.js"></script>
+	<script src="js/codemirror.js"></script>
+	<script src="js/codemirror/mode/clojure.js"></script>
+	<script src="js/codemirror/matchbrackets.js"></script>
 
-    <link href="css/screen.css" rel="stylesheet"/>
+	<link href="css/screen.css" rel="stylesheet"/>
 	<link href="css/codemirror.css" rel="stylesheet"/>
 	<link href="css/codemirror/solarized.css" rel="stylesheet"/>
+
+	<script src="js/out/goog/base.js"></script>
+	<script src="js/consize.js"></script>
+	<script>goog.require('consize.web');</script>
+
+	<script>
+		window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
+		var fs = null;
+
+		function errorHandler(e) {
+			var msg = '';
+			switch (e.code) {
+				case FileError.QUOTA_EXCEEDED_ERR:
+					msg = 'QUOTA_EXCEEDED_ERR';
+					break;
+				case FileError.NOT_FOUND_ERR:
+					msg = 'NOT_FOUND_ERR';
+					break;
+				case FileError.SECURITY_ERR:
+					msg = 'SECURITY_ERR';
+					break;
+				case FileError.INVALID_MODIFICATION_ERR:
+					msg = 'INVALID_MODIFICATION_ERR';
+					break;
+				case FileError.INVALID_STATE_ERR:
+					msg = 'INVALID_STATE_ERR';
+					break;
+				default:
+					msg = 'Unknown Error';
+					break;
+			};
+			document.querySelector('#example-list-fs-ul').innerHTML = 'Error: ' + msg;
+		}
+
+		function initFS() {
+			window.requestFileSystem(window.TEMPORARY, 1024*1024, function(filesystem) {
+				fs = filesystem;
+			}, errorHandler);
+		}
+
+		var buttons = document.querySelectorAll('#example-list-fs button');
+		var filelist = document.querySelector('#example-list-fs-ul');
+
+		if (buttons.length >= 3) {
+			buttons[0].addEventListener('click', function(e) {
+				if (!fs) {
+					return;
+				}
+				fs.root.getFile('log.txt', {create: true}, null, errorHandler);
+				fs.root.getFile('song.mp3', {create: true}, null, errorHandler);
+				fs.root.getDirectory('mypictures', {create: true}, null, errorHandler);
+				filelist.innerHTML = 'Files created.';
+			}, false);
+
+			buttons[1].addEventListener('click', function(e) {
+				if (!fs) {
+					return;
+				}
+
+				var dirReader = fs.root.createReader();
+				dirReader.readEntries(function(entries) {
+					if (!entries.length) {
+						filelist.innerHTML = 'Filesystem is empty.';
+					} else {
+						filelist.innerHTML = '';
+					}
+
+					var fragment = document.createDocumentFragment();
+					for (var i = 0, entry; entry = entries[i]; ++i) {
+						var img = entry.isDirectory ? '<img src="http://www.html5rocks.com/static/images/tutorials/icon-folder.gif">' :
+								'<img src="http://www.html5rocks.com/static/images/tutorials/icon-file.gif">';
+						var li = document.createElement('li');
+						li.innerHTML = [img, '<span>', entry.name, '</span>'].join('');
+						fragment.appendChild(li);
+					}
+					filelist.appendChild(fragment);
+				}, errorHandler);
+			}, false);
+
+			buttons[2].addEventListener('click', function(e) {
+				if (!fs) {
+					return;
+				}
+
+				var dirReader = fs.root.createReader();
+				dirReader.readEntries(function(entries) {
+					for (var i = 0, entry; entry = entries[i]; ++i) {
+						if (entry.isDirectory) {
+							entry.removeRecursively(function() {}, errorHandler);
+						} else {
+							entry.remove(function() {}, errorHandler);
+						}
+					}
+					filelist.innerHTML = 'Directory emptied.';
+				}, errorHandler);
+			}, false);
+		}
+
+		// Initiate filesystem on page load.
+		if (window.requestFileSystem) {
+			initFS();
+		}
+	</script>
 </head>
 <body>
 <header>
-    <nav>
-        <h1>Consize as Web App</h1>
-        <ul>
-            <li><label for="_repl">REPL</label></li>
-            <li><label for="_filesystem">Filesystem</label></li>
-        </ul>
-    </nav>
+	<nav>
+		<h1>Consize as Web App</h1>
+		<ul>
+			<li>REPL</li>
+			<li>Filesystem</li>
+		</ul>
+	</nav>
 </header>
-<section id="content">
-    <input id="_repl" name="views" type="radio"/>
-    <section id="repl">
-        <h2>REPL</h2>
-        <div id="console"></div>
-        <textarea id="prompt"></textarea>
-    </section>
+<aside>
+	<h2>Files</h2>
+	<ol>
+		<li>
+			<h3>Consize</h3>
+			<ol id="files-consize">
+				<li>consize.clj</li>
+				<li>bootimage.txt</li>
+				<li>prelude.txt</li>
+			</ol>
+		</li>
+		<li>
+			<h3>Excercises</h3>
+			<ol id="files-excercises">
+				<li>consize.clj</li>
+				<li>bootimage.txt</li>
+				<li>prelude.txt</li>
+			</ol>
+		</li>
+		<li>
+			<h3>User</h3>
+			<ol id="files-user">
+				<li>consize.clj</li>
+				<li>bootimage.txt</li>
+				<li>prelude.txt</li>
+			</ol>
+		</li>
+	</ol>
+</aside>
+<article>
+	<section id="repl">
+		<h2>REPL</h2>
 
-    <input checked id="_filesystem" name="views" type="radio"/>
-    <section id="filesystem">
-        <h2>Filesystem</h2>
-        <ul id="files">
-            <li id="new-file"><label for="editor">Neue Datei</label></li>
-        </ul>
-        <textarea id="editor">;; Develop here...</textarea>
-    </section>
-</section>
-<script src="js/out/goog/base.js"></script>
-<script src="js/consize.js"></script>
-<script>goog.require('consize.web');</script>
+		<div id="console">
+			<ul id="console-buffer"></ul>
+			<div id="console-prompt">
+				<!--<span id="console-ns"></span>-->
+				<textarea id="console-input">(defn pow [x] (* x x))</textarea>
+			</div>
+		</div>
+	</section>
+
+	<section id="filesystem">
+		<h2>Filesystem</h2>
+		<!--<input id="filesystem-name" type="text"/>-->
+		<!--<input id="filesystem-save" value="Save" type="submit"/>-->
+		<!--<input id="filesystem-eval" value="Eval" type="submit"/>-->
+		<!--<textarea id="filesystem-editor">;; Develop here...</textarea>-->
+	</section>
+</article>
 </body>
 </html>

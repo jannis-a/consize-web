@@ -1,16 +1,26 @@
 @import compass
 @import compass/reset
 
-$pad: 7px
+$pad: 5px
 $width: 300px
 $height: 400px
 
 *
 	+box-sizing(border-box)
 
+h1, h2, h3
+	font-weight: bold
+
 h1
 	display: inline
+	font-size: 24px
 	vertical-align: center
+
+h2
+	font-size: 20px
+
+h3
+	font-size: 18px
 
 label
 	cursor: pointer
@@ -32,41 +42,41 @@ header
 			label
 				padding: 2*$pad
 
-#content
+article
 	+pie-clearfix
-	$_pad: 3*$pad
+	$_pad: 4*$pad
 	background: #eee
+	//float: right
+	margin-left: 15%
 	padding: $_pad
-	> input[type='radio']
-		display: none
-		//&, + section
-		//	display: none
-		//&:checked + section
-		//	display: block
-		+ section
-			float: left
-			padding-left: $_pad
-			width: 50%
-			&:first-of-type
-				padding-left: 0
+	width: 85%
+	> section
+		float: left
+		height: $height
+		padding-left: $_pad
+		width: 50%
+		&:first-of-type
+			padding-left: 0
 
 #repl
 	background: white
 	height: $height
-	#console
+	#console-buffer
 		max-height: $height - 32px - 3*$pad
 		white-space: pre-wrap
 		width: 100%
 		word-wrap: break-word
 		overflow-y: auto
-	#prompt
+		li
+			.ns
+				float: left
+	#console-input
+		clear: left
+		height: 100px
 		width: 100%
 
-#filesystem
-	+pie-clearfix
-	#files
-		float: left
-		width: 20%
-	#editor
-		height: $height
-		width: 80%
+aside
+	background: #ccc
+	float: left
+	padding: 4*$pad
+	width: 15%

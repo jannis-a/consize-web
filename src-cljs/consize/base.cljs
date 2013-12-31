@@ -8,7 +8,7 @@
 
 (def command-prefix (if (mac?) "Cmd" "Ctrl"))
 
-(defn getElementById [element]
+(defn dom-by-id [element]
 	(.getElementById js/document element))
 
 (def dom-append)

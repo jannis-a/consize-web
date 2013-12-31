@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Unnamed" type="ClojureScriptRunConfiguration" factoryName="Clojure Script" singleton="true">
+    <module name="Consize" />
+    <setting name="path" value="$PROJECT_DIR$/lib/clojurescript/bin/cljsc.clj" />
+    <setting name="vmparams" value="" />
+    <setting name="params" value="$PROJECT_DIR$/src-cljs/consize.web &gt; consize.js" />
+    <setting name="workDir" value="$PROJECT_DIR$/resources/public/js" />
+    <setting name="repl" value="false" />
+    <RunnerSettings RunnerId="Run" />
+    <ConfigurationWrapper RunnerId="Run" />
+    <method>
+      <option name="Make" enabled="false" />
+      <option name="Synchronize Leiningen" enabled="true" />
+    </method>
+  </configuration>
+</component>

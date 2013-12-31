@@ -17,28 +17,31 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 
 * { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
 
-h1 { display: inline; vertical-align: center; }
+h1, h2, h3 { font-weight: bold; }
+
+h1 { display: inline; font-size: 24px; vertical-align: center; }
+
+h2 { font-size: 20px; }
+
+h3 { font-size: 18px; }
 
 label { cursor: pointer; }
 
 header ul { display: inline; }
 header nav { background: #dddddd; }
-header nav li { background: #cccccc; border-left: 1px solid #aaaaaa; display: inline-block; padding: 14px 0; }
+header nav li { background: #cccccc; border-left: 1px solid #aaaaaa; display: inline-block; padding: 10px 0; }
 header nav li:first-child { border-left: none; }
 header nav li:hover { background: #bbbbbb; }
-header nav li label { padding: 14px; }
+header nav li label { padding: 10px; }
 
-#content { *zoom: 1; background: #eeeeee; padding: 21px; }
-#content:after { content: ""; display: table; clear: both; }
-#content > input[type='radio'] { display: none; }
-#content > input[type='radio'] + section { float: left; padding-left: 21px; width: 50%; }
-#content > input[type='radio'] + section:first-of-type { padding-left: 0; }
+article { *zoom: 1; background: #eeeeee; margin-left: 15%; padding: 20px; width: 85%; }
+article:after { content: ""; display: table; clear: both; }
+article > section { float: left; height: 400px; padding-left: 20px; width: 50%; }
+article > section:first-of-type { padding-left: 0; }
 
 #repl { background: white; height: 400px; }
-#repl #console { max-height: 347px; white-space: pre-wrap; width: 100%; word-wrap: break-word; overflow-y: auto; }
-#repl #prompt { width: 100%; }
+#repl #console-buffer { max-height: 353px; white-space: pre-wrap; width: 100%; word-wrap: break-word; overflow-y: auto; }
+#repl #console-buffer li .ns { float: left; }
+#repl #console-input { clear: left; height: 100px; width: 100%; }
 
-#filesystem { *zoom: 1; }
-#filesystem:after { content: ""; display: table; clear: both; }
-#filesystem #files { float: left; width: 20%; }
-#filesystem #editor { height: 400px; width: 80%; }
+aside { background: #cccccc; float: left; padding: 20px; width: 15%; }

@@ -16,9 +16,7 @@
           </value>
         </option>
         <option name="FORMATTER_TAGS_ENABLED" value="true" />
-        <ClojureCodeStyleSettings>{
-  :plugin.formatting/align-maps false
-}</ClojureCodeStyleSettings>
+        <ClojureCodeStyleSettings />
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>
