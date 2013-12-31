@@ -1,0 +1,22 @@
+#!/bin/sh
+
+ROOT="`dirname $0`/.."
+
+if [ "$CLOJURESCRIPT_HOME" = "" ]; then
+	CLOJURESCRIPT_HOME="${ROOT}/lib/clojurescript"
+fi
+
+CLJSC_CP=''
+for next in lib/*: src/clj: src/cljs: test/cljs; do
+    CLJSC_CP="${CLJSC_CP}${CLOJURESCRIPT_HOME}/${next}"
+done
+for next in src-clj: src-cljs; do
+	CLJSC_CP="${CLJSC_CP}${ROOT}/${next}"
+done
+
+if test "$#" -eq 0; then
+	echo 'Usage: cljsc <file-or-dir>'
+	echo '       cljsc <file-or-dir> "{:optimizations :advanced}"'
+else
+	java -server -cp "$CLJSC_CP" clojure.main "$CLOJURESCRIPT_HOME/bin/cljsc.clj" "$@"
+fi

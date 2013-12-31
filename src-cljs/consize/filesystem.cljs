@@ -1,26 +1,27 @@
-(ns consize.filesystem)
+(ns consize.filesystem
+	(:require [consize.repl :as repl])
+	(:use [consize.base :only (getElementById, command-prefix)]))
 
-(def storage (.-localStorage js/window))
+(def editor-file "consize.cljs")
 
-(defn load [file]
+(def storage
+	(.-localStorage js/window))
+
+(defn file-load [file]
 	(.getItem storage file))
 
-(defn save [file content]
+(defn file-save [file content]
 	(.setItem storage file content))
+
+(defn file-list []
+	(for [file (range 0 (.-length storage))]
+		(.key storage file)))
 
 (defn- map->js [m]
 	(let [out (js-obj)]
 		(doseq [[k v] m]
 			(aset out (name k) v))
 		out))
-
-(defn str-contains? [s x]
-	(not= (.indexOf s x) -1))
-
-(defn mac? []
-	(str-contains? (str (.-platform js/navigator)) "Mac"))
-
-(def command-prefix (if (mac?) "Cmd" "Ctrl"))
 
 (defn register-shortcuts [editor key-map]
 	(let [js-key-map
@@ -30,49 +31,20 @@
 						 map->js)]
 		(.addKeyMap editor js-key-map)))
 
-;; show/hide editor
-
-;(def editor-visible (atom false))
-;
-;(def editor-visible-key "__editor_visible")
-;
-;(defn update-editor-visibility [show?]
-;	(let [container (js/$ "#editor-container")]
-;		(if show?
-;			(.slideDown container 100)
-;			(.slideUp container 100))))
-;
-;(defn store-editor-visibility [show?]
-;	(store-item editor-visible-key (str show?)))
-
-;(defn update-link [show?]
-;	(.html (js/$ "#toggle-editor")
-;				 (str (if show? "Hide" "Show")
-;							" file editor")))
-
-;(defn add-updating-watch [reference fun]
-;	(add-watch reference fun (fn [_ _ _ value] (fun value))))
-;
-;(defn setup-editor-toggling []
-;	(add-updating-watch editor-visible update-editor-visibility)
-;	(add-updating-watch editor-visible store-editor-visibility)
-;	(add-updating-watch editor-visible update-link)
-;	(.click (js/$ "#toggle-editor") #(swap! editor-visible not))
-;	(reset! editor-visible (= "true" (load editor-visible-key))))
-
-;; main editor function
-
 (defn editor
 	[editor-selector]
-	;(let [eval-cmd (str command-prefix "-E")]
-		;(setup-editor-toggling)
-		;(.html (js/$ "#tiny-note")
-		;			 (str "Press " eval-cmd
-		;						" to evaluate file in REPL."))
-		(doto
-				(.fromTextArea js/CodeMirror
-											 (.getElementById js/document "editor")
-											 (map->js {:mode "clojure"
-																 :lineNumbers true
-																 :matchBrackets true}))
-			(.setValue (load "scratch"))));)
+	(doto
+		(.fromTextArea js/CodeMirror
+			(getElementById editor-selector)
+			(map->js {:mode "clojure"
+								:lineNumbers true
+								:matchBrackets true}))
+		(.setValue (file-load "consize.cljs"))))
+
+(defn init [list-selector]
+	(.log js/console "> " list-selector)
+	(let [files (getElementById list-selector)]
+		(for [file (file-list)]
+			(let [li (.createElement js/document "li")]
+				(set! (.-innerHTML li) file)
+				(.appendChild files li)))))

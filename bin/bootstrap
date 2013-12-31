@@ -1,0 +1,15 @@
+#!/bin/sh
+
+ROOT="`dirname $0`/.."
+
+# fetch submodules
+git submodule init
+
+# fixing closure compiler download link in clojurescript bootstrap script
+cd ${ROOT}/lib/clojurescript/script
+sed -i '' 's/closure\-compiler\.googlecode\.com\/files/dl\.google\.com\/closure-compiler/g' bootstrap
+
+# bootstrap and compile clojurescript compiler
+cd ..
+./script/bootstrap
+./script/compile

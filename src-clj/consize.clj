@@ -1,1 +1,0 @@
-../resources/public/consize/consize.clj

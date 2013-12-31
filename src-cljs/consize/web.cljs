@@ -1,34 +1,25 @@
 (ns consize.web
-	(:require [consize.core :as core]
+	(:require [clojure.browser.dom :as dom]
+						[consize.core :as core]
 						[consize.repl :as repl]
 						[consize.filesystem :as fs]))
 
-(set! *command-line-args* "\\ prelude.txt run")
-
-(def slurp fs/load)
-(def spit fs/save)
-
+(set! *command-line-args* "\\ bootimage.txt run")
+(def slurp fs/file-load)
+(def spit fs/file-save)
 (def VM core/VM)
 
-(defn init []
-	(println "Consize returns"
-		(first ((VM "apply") (first ((VM "func") VM
-			(first (apply (VM "tokenize") ((VM "uncomment")
-			(reduce str (interpose " " *command-line-args*))))))) () ))))
-
 (defn evaluate-file
-	"Evaluates the editor's file in the REPL console."
 	[editor console]
-	(let [text (.getValue editor)
-				prompt-text (repl/cancel-input console "")]
-		(cljs.repl/eval-print text)
-		(fs/save "scratch" text)
-		(repl/start-prompt console prompt-text)))
+	(let [text (.getValue editor)]
+		(repl/pep console text)
+		(fs/file-save "consize.cljs" text)))
 
-(.ready (js/jQuery js/document) (fn[]
-	(let [console (repl/init "#console")
-				editor (fs/editor "#editor")]
-		(repl/eval "(ns consize.web)")
+(set! (.-onload js/window) (fn[]
+	(fs/init "files")
+
+	(let [console (repl/init "console" "prompt")
+				editor (fs/editor "editor")]
 		(repl/register-shortcuts console
 			{"E" #(this-as this-console
 				(evaluate-file editor this-console))})

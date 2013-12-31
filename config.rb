@@ -1,13 +1,14 @@
-require 'compass-normalize'
-
+# Paths
 http_path = "/"
 css_dir = "resources/public/css"
-sass_dir = "resources/public/compass"
+sass_dir = "resources/compass"
 javascripts_dir = "resources/public/js"
 
+# Options
 preferred_syntax = :sass
 output_style = :compact
 relative_assets = true
 line_comments = false
 
-# sass-convert -R --from scss --to sass sass scss && rm -rf sass && mv scss sass
+# Command to convert files from sass to scss
+# sass-convert -R --from sass --to scss compass compass

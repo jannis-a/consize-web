@@ -1,5 +1,4 @@
 #!/bin/sh
 
-cd resources/public/js
-#rm out/*.js
+cd "resources/public/js"
 ./../../../bin/cljsc ../../../src-cljs/consize/web.cljs > consize.js

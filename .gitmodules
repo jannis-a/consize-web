@@ -1,9 +1,6 @@
-[submodule "resources/clojurescript"]
-	path = resources/clojurescript
+[submodule "lib/clojurescript"]
+	path = lib/clojurescript
 	url = https://github.com/kanaka/clojurescript
-[submodule "resources/codemirror"]
-	path = resources/codemirror
+[submodule "lib/codemirror"]
+	path = lib/codemirror
 	url = https://github.com/marijnh/CodeMirror
-[submodule "resources/jq-console"]
-	path = resources/jq-console
-	url = https://github.com/replit/jq-console

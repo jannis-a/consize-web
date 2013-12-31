@@ -1,0 +1,71 @@
+@import compass
+@import compass/reset
+
+$pad: 7px
+$width: 300px
+$height: 400px
+
+*
+	+box-sizing(border-box)
+
+h1
+	display: inline
+	vertical-align: center
+
+label
+	cursor: pointer
+
+header
+	ul
+		display: inline
+	nav
+		background: #ddd
+		li
+			background: #ccc
+			border-left: 1px solid #aaa
+			display: inline-block
+			padding: 2*$pad 0
+			&:first-child
+				border-left: none
+			&:hover
+				background: #bbb
+			label
+				padding: 2*$pad
+
+#content
+	+pie-clearfix
+	$_pad: 3*$pad
+	background: #eee
+	padding: $_pad
+	> input[type='radio']
+		display: none
+		//&, + section
+		//	display: none
+		//&:checked + section
+		//	display: block
+		+ section
+			float: left
+			padding-left: $_pad
+			width: 50%
+			&:first-of-type
+				padding-left: 0
+
+#repl
+	#console
+		background: white
+		height: $height
+		position: relative
+		white-space: pre-wrap
+		width: 100%
+		word-wrap: break-word
+	#prompt
+		width: 100%
+
+#filesystem
+	+pie-clearfix
+	#files
+		float: left
+		width: 20%
+	#editor
+		height: $height
+		width: 80%

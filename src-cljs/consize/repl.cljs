@@ -1,56 +1,66 @@
 (ns consize.repl
-	(:require [cljs.repl :as repl]))
+	(:require [cljs.repl :as repl])
+	(:use [consize.base :only (getElementById, command-prefix, dom-append)]))
 
-(def eval repl/evaluate-code)
+(defn repl-print [log text cls]
+	(doseq [line (.split (str text) #"\n")]
+		(dom-append log
+								[:div {:class (str "cg "
+				(when cls
+					(str " " cls)))}
+								 line]))
+	(set! (.-scrollTop log) (.-scrollHeight log)))
 
-(def eval-pr repl/eval-print)
+(defn postexpr [console expr]
+	(dom-append console
+							[:table
+							 [:tbody
+								[:tr
+								 [:td {:class "cg"} (repl/prompt)]
+								 [:td (.replace expr #"\n$" "")]]]]))
 
-(defn start-prompt
-	"Starts a new REPL prompt and optionally pre-populates user input field
-	 with initial-text."
-	([jqconsole initial-text]
-	 (let [prompt-label (str "\n" (repl/prompt))
-				 continue-label (str (apply str (repeat (- (count prompt-label) 4) " "))
-														 "...")]
-		 (.SetPromptLabel jqconsole prompt-label continue-label)
-		 (.Prompt jqconsole "true"
-							(fn [input]
-								(repl/eval-print input)
-								(start-prompt jqconsole))
-							#(if (repl/complete-form? %)
-								false
-								0))
-		 (when-not (empty? initial-text)
-			 (.SetPromptText jqconsole initial-text)))
-	 jqconsole)
-	([jqconsole] (start-prompt jqconsole nil)))
 
-(defn cancel-input
-	"Cancel the REPL prompt and write a message to output."
-	[jqconsole message]
-	(let [prompt-text (.GetPromptText jqconsole false)]
-		(doto jqconsole
-			.ClearPromptText
-			.AbortPrompt
-			(.Write message "jqconsole-output"))
-		prompt-text))
+(defn- map->js [m]
+	(let [out (js-obj)]
+		(doseq [[k v] m]
+			(aset out (name k) v))
+		out))
 
-(defn register-shortcuts [jqconsole shortcut-map]
-	(doseq [[key callback] shortcut-map]
-		(.RegisterShortcut jqconsole key callback)))
+(defn register-shortcuts [editor key-map]
+	(let [js-key-map
+				(->> (for [[k callback] key-map]
+						 		[(str command-prefix "-" k) callback])
+						 (into {})
+						 map->js)]
+		(.addEventListener js/document editor js-key-map)))
+
+(defn pep [console expr]
+	(postexpr console expr)
+	(repl/eval-print expr))
 
 (defn init
-	"Create and initialize the REPL console, with a shortcut-map that
-	 maps keys to callback functions."
-	[console-selector]
+	[console-selector prompt-selector]
 	(repl/init)
-	(set! cljs.core/*ns-sym* (symbol "consize.web"))
-	(let [jqconsole
-				(.jqconsole (js/$ console-selector) "")]
-		(.SetIndentWidth jqconsole 1)
-		;; Setup the print function
-		(set! *out* #(.Write jqconsole %))
-		(set! *rtn* #(.Write jqconsole % "jqconsole-output"))
-		(set! *err* #(.Write jqconsole % "jqconsole-message-error"))
+
+	(let [console (getElementById console-selector)
+				prompt (getElementById prompt-selector)]
+
+		(set! *out* #(repl-print console % nil))
+		(set! *rtn* #(repl-print console % "return"))
+		(set! *err* #(repl-print console % "error"))
 		(set! *print-fn* #(*out* %1))
-		(start-prompt jqconsole)))
+
+		(println ";; Consize Web REPL")
+
+		(set! (.-onkeypress prompt)
+			(fn [ev]
+				(when (== (.-keyCode (or ev event)) 13)
+					(let [line (.-value prompt)]
+						(if (repl/complete-form? line)
+							(do
+								(pep console line)
+								(js/setTimeout #(set! (.-value prompt) "") 0)
+								;(set! (.-innerText (getElementById  "ns")) (repl/prompt))
+								))))))
+
+		(.focus prompt)))
