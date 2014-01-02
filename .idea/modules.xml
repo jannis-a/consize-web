@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/lib/clojurescript/Clojurescript.iml" filepath="$PROJECT_DIR$/lib/clojurescript/Clojurescript.iml" />
       <module fileurl="file://$PROJECT_DIR$/Consize.iml" filepath="$PROJECT_DIR$/Consize.iml" />
     </modules>
   </component>

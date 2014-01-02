@@ -27,21 +27,24 @@ h3 { font-size: 18px; }
 
 label { cursor: pointer; }
 
+header { background: #dddddd; }
 header ul { display: inline; }
-header nav { background: #dddddd; }
-header nav li { background: #cccccc; border-left: 1px solid #aaaaaa; display: inline-block; padding: 10px 0; }
-header nav li:first-child { border-left: none; }
-header nav li:hover { background: #bbbbbb; }
-header nav li label { padding: 10px; }
+header ul li { background: #cccccc; display: inline-block; padding: 10px 0; }
+header ul li:hover { background: #bbbbbb; }
+header ul li label { padding: 10px; }
 
-article { *zoom: 1; background: #eeeeee; margin-left: 15%; padding: 20px; width: 85%; }
+article { *zoom: 1; background: #eeeeee; margin-left: 15%; padding: 20px; }
 article:after { content: ""; display: table; clear: both; }
-article > section { float: left; height: 400px; padding-left: 20px; width: 50%; }
+article > section { float: left; height: 800px; padding-left: 20px; width: 50%; }
 article > section:first-of-type { padding-left: 0; }
 
-#repl { background: white; height: 400px; }
-#repl #console-buffer { max-height: 353px; white-space: pre-wrap; width: 100%; word-wrap: break-word; overflow-y: auto; }
-#repl #console-buffer li .ns { float: left; }
-#repl #console-input { clear: left; height: 100px; width: 100%; }
+#repl { height: 800px; }
+#repl #console { background: white; }
+#repl #console .ns { font-weight: bold; }
+#repl #console-buffer { max-height: 753px; overflow: hidden; white-space: pre-wrap; width: 100%; word-wrap: break-word; }
+#repl #console-ns { float: left; }
+#repl #console-input { border: 0; height: 16px; font-size: 16px; overflow: hidden; outline: none; width: 100%; padding: 0; resize: none; margin: 0; }
 
-aside { background: #cccccc; float: left; padding: 20px; width: 15%; }
+#editor .CodeMirror { height: 750px; }
+
+aside { float: left; padding: 20px; width: 200px; }

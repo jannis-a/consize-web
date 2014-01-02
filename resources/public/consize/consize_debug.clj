@@ -2,14 +2,10 @@
 ;;; Copyright (c) 2013, Dominikus Herzberg, Heilbronn University, Germany
 ;;; New BSD License: http://opensource.org/licenses/BSD-3-Clause
 (ns
-	;^{:doc "Consize -- A concatenative programming language (when size matters)"
-	;  :author "Dominikus Herzberg, Heilbronn University, Germany" }
-  consize.core
-	(:require [clojure.browser.dom :as dom])
-  (:use [clojure.string :only [lower-case split trim]]
-				[cljs.reader :only [read-string]]))
-
-;(def sequence seq)
+	^{:doc "Consize -- A concatenative programming language (when size matters)"
+	  :author "Dominikus Herzberg, Heilbronn University, Germany" }
+  consize
+  (:use [clojure.string :only (lower-case split trim)]))
 
 (defn- wordstack? [s] (and (not (empty? s)) (seq? s) (every? #(string? %) s)))
 
@@ -99,7 +95,7 @@
 ;; The Interpreter being the Virtual Machine (VM)
 "stepcc" (fn [cs ds dict & r]
 	{:pre [(seq cs) (seq? ds) (map? dict)]} ; (seq cs) tests if cs is not empty
-	;(.log js/console "> STEPCC\nCS" cs "\nDS" ds "\nDICT" dict)
+	;(println "> STEPCC\ncs" (type cs) "\nds" (type ds) "\ndict" (type dict) "\n")
 	(let [itm (first cs) rcs (rest cs)]
 		(cond
 			(string? itm)
@@ -109,33 +105,32 @@
 						  	:else (conj r dict (conj ds itm) (conj rcs "read-word"))))
 		  (fn? itm) (apply itm rcs ds dict r) ; apply fn on continuation
 			(map? itm) (conj r dict (conj ds itm) (conj rcs "read-mapping"))
-			:else (conj r dict (conj ds itm) rcs)))
-	),
+			:else (conj r dict (conj ds itm) rcs)))),
 
 ;; Words for Functions
 "apply" (fn [f s & r] {:pre [(fn? f) (seq? s)]}
-	;(.log js/console "> APPLY\nF" f "\nS" s)
+	;(println "> APPLY\nf" f "\ns" s "\n")
 	(conj r (apply f s))),
 "compose" (fn [f2 f1 & r] {:pre [(fn? f1) (fn? f2)]}
 	(conj r (fn [& ds] (apply f2 (apply f1 ds))))),
 "func" (fn [dict qt & r] {:pre [(map? dict) (seq? qt)]} ; function constructor
-	;(.log js/console "> FUNC\nDICT" dict "\nQT" qt)
+	;(println "> FUNC\ndict" (type dict) "\nqt" (type qt) "\n")
 	(conj r
 		(let [runcc
 			(fn [cs ds dict]
-				;(.log js/console "> RUNCC\nCS" cs "\nDS" ds "\nDICT" dict)
+				;(println "> RUNCC\ncs" (type cs) "\nds" (type ds) "\ndict" (type dict) "\n")
 				(if (empty? cs)
 					ds
 					(let [[cs' ds' dict']
 						(try
-							;(.log js/console "> PRE-STEPCC\nCS" cs "\nDS" ds "\nDICT" dict)
-							((consize.core/VM "stepcc") cs ds dict)
+							;(println "> PRE-STEPCC\ncs" (type cs) "\nds" (type ds) "\ndict" (type dict) "\n")
+							((VM "stepcc") cs ds dict)
 							(catch Error     e (list (conj cs "error") ds dict))
 							(catch Exception e (list (conj cs "error") ds dict)))]
 						(recur cs' ds' dict'))))]
 			(fn [& ds]
-				;(.log js/console "> PRE-RUNCC\nQT" qt "\nDS" ds "\nDICT" dict)
-				(runcc qt (if (nil? ds) () (seq ds)) dict))))),
+				;(println "> PRE-RUNCC\nqt" (type qt) "\nds" (type ds) "\ndict" (type dict) "\n")
+				(runcc qt (sequence ds) dict))))),
 
 ;; Arithmetics
 "integer?" (fn [w & r]
@@ -151,7 +146,7 @@
 "run"  '("load" "call"),
 })
 
-;(println "Consize returns"
-;	(first ((VM "apply") (first ((VM "func") VM
-;					(first (apply (VM "tokenize") ((VM "uncomment")
-;					(reduce str (interpose " " *command-line-args*))))))) () )))
+(println "Consize returns"
+	(first ((VM "apply") (first ((VM "func") VM
+					(first (apply (VM "tokenize") ((VM "uncomment")
+					(reduce str (interpose " " *command-line-args*))))))) () )))

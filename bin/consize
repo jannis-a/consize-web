@@ -1,0 +1,7 @@
+#!/bin/sh
+
+ROOT="`cd ${0%/*} && echo $PWD`/.."
+CONSIZE="$ROOT/resources/public/consize"
+
+cd ${CONSIZE}
+java -cp ${ROOT}/lib/clojure-1.5.1-slim.jar clojure.main consize.clj "\ prelude.txt run say-hi"

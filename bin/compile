@@ -1,4 +1,6 @@
 #!/bin/sh
 
-cd "resources/public/js"
-./../../../bin/cljsc ../../../src-cljs/consize/web.cljs > consize.js
+ROOT="`cd ${0%/*} && echo $PWD`/.."
+
+cd "$ROOT/resources/public/js"
+${ROOT}/bin/cljsc ${ROOT}/src-cljs/consize/web/core.cljs > consize.js
