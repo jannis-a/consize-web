@@ -2,7 +2,6 @@
 http_path = "/"
 css_dir = "resources/public/css"
 sass_dir = "resources/compass"
-javascripts_dir = "resources/public/js"
 
 # Options
 preferred_syntax = :sass

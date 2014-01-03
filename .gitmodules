@@ -4,3 +4,6 @@
 [submodule "lib/codemirror"]
 	path = lib/codemirror
 	url = https://github.com/marijnh/CodeMirror
+[submodule "lib/jq-console"]
+	path = lib/jq-console
+	url = https://github.com/replit/jq-console.git

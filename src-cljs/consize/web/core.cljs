@@ -1,14 +1,22 @@
 (ns consize.web.core
-	(:require [consize.core :as core]
-						[consize.web.repl :as repl]
+	(:require [clojure.browser.dom :as dom]
 						[consize.web.filesystem :as fs]))
 
-(set! *command-line-args* "\\ prelude.txt run say-hi")
-(def slurp fs/slurp)
-(def spit fs/spit)
-(def VM core/VM)
+(defn lazy-contains? [col key]
+	(some #{key} col))
 
+(defn js-log
+	"Simple method for logging to js console"
+	[args]
+	(.log js/console args)
+	(webe))
+
+;; Set the print function
+(set! *print-fn* #(dom/append
+									 (dom/get-element "test")
+									 (dom/element %)))
+
+;; Set on page load function
 (set! (.-onload js/window)
 			(fn []
-				(repl/init "console")
-				(fs/init "files" "editor")))
+				(js-log "benis")))

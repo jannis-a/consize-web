@@ -3,6 +3,7 @@
 
 $pad: 5px
 $height: 800px
+$sidebar_width: 200px
 
 *
 	+box-sizing(border-box)
@@ -11,7 +12,7 @@ h1, h2, h3
 	font-weight: bold
 
 h1
-	display: inline
+	//display: inline
 	font-size: 24px
 	vertical-align: center
 
@@ -26,26 +27,27 @@ label
 
 header
 	background: #ddd
-	ul
-		display: inline
-		li
-			background: #ccc
-			display: inline-block
-			padding: 2*$pad 0
-			&:hover
-				background: #bbb
-			label
-				padding: 2*$pad
+	padding: 2*$pad 4*$pad
+	//ul
+	//	display: inline
+	//	li
+	//		background: #ccc
+	//		display: inline-block
+	//		padding: 2*$pad 0
+	//		&:hover
+	//			background: #bbb
+	//		label
+	//			padding: 2*$pad
 
 article
 	+pie-clearfix
 	$_pad: 4*$pad
 	background: #eee
-	margin-left: 15%
+	margin-left: 200px
 	padding: $_pad
 	> section
 		float: left
-		height: $height
+		//height: $height
 		padding-left: $_pad
 		width: 50%
 		&:first-of-type
@@ -54,33 +56,35 @@ article
 #repl
 	height: $height
 	#console
-		background: white
-		.ns
-			font-weight: bold
-	#console-buffer
-		max-height: $height - 32px - 3*$pad
-		overflow: hidden
-		white-space: pre-wrap
+		background: black
+		position: relative
+		color: white
 		width: 100%
-		word-wrap: break-word
-	#console-ns
-		float: left
-	#console-input
-		border: 0
-		height: 16px
-		font-size: 16px
-		overflow: hidden
-		outline: none
-		width: 100%
-		padding: 0
-		resize: none
-		margin: 0
+		height: 100%
+		.jqconsole-cursor
+			background: gray
+		.jqconsole-blurred .jqconsole-cursor
+			background: #666
+		.jqconsole-prompt
+			color: #0d0
+		.jqconsole-old-prompt
+			color: #0b0
+		.jqconsole-input
+			color: #dd0
+		.jqconsole-old-input
+			color: #bb0
+		.jqconsole-output
+			color: white
 
 #editor
 	.CodeMirror
-		height: $height - 50px
+		height: $height
 
 aside
+	$_width: $sidebar_width
 	float: left
 	padding: 4*$pad
-	width: 200px
+	width: $_width
+	+ article
+		margin-left: $_width
+
