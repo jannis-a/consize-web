@@ -1,6 +1,6 @@
 # Paths
-css_dir = "resources/public/css"
-sass_dir = "resources/compass"
+css_dir = 'resources/public/css'
+sass_dir = 'resources/compass'
 
 # Options
 preferred_syntax = :sass

@@ -4,7 +4,7 @@
 								 [org.clojure/clojurescript "0.0-2138"]
 								 [prismatic/dommy "0.1.1"]]
 	:plugins [[lein-cljsbuild "1.0.0-alpha2"]]
-	;:hooks [leiningen.cljsbuild]
+	:hooks [leiningen.cljsbuild]
 	:source-paths ["src-clj"]
 	:cljsbuild {
 		:builds [{
