@@ -2,89 +2,69 @@
 @import compass/reset
 
 $pad: 5px
-$height: 800px
+
 $sidebar_width: 200px
+
+$base_font_families: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif
+$base_font_size_px: 12px
+
+$repl_font_families: 'Courier New', Courier, monospace
 
 *
 	+box-sizing(border-box)
 
+html, body
+	height: 100%
+
+body
+	font-family: $base_font_families
+
 h1, h2, h3
 	font-weight: bold
-
 h1
-	//display: inline
 	font-size: 24px
-	vertical-align: center
-
 h2
 	font-size: 20px
-
 h3
-	font-size: 18px
+	font-size: $base_font_size_px + 2
 
 label
 	cursor: pointer
 
-header
-	background: #ddd
-	padding: 2*$pad 4*$pad
-	//ul
-	//	display: inline
-	//	li
-	//		background: #ccc
-	//		display: inline-block
-	//		padding: 2*$pad 0
-	//		&:hover
-	//			background: #bbb
-	//		label
-	//			padding: 2*$pad
-
-article
-	+pie-clearfix
-	$_pad: 4*$pad
-	background: #eee
-	margin-left: 200px
-	padding: $_pad
-	> section
-		float: left
-		//height: $height
-		padding-left: $_pad
-		width: 50%
-		&:first-of-type
-			padding-left: 0
-
-#repl
-	height: $height
-	#console
-		background: black
-		position: relative
-		color: white
-		width: 100%
-		height: 100%
-		.jqconsole-cursor
-			background: gray
-		.jqconsole-blurred .jqconsole-cursor
-			background: #666
-		.jqconsole-prompt
-			color: #0d0
-		.jqconsole-old-prompt
-			color: #0b0
-		.jqconsole-input
-			color: #dd0
-		.jqconsole-old-input
-			color: #bb0
-		.jqconsole-output
-			color: white
-
-#editor
-	.CodeMirror
-		height: $height
+aside, article
+	height: 100%
 
 aside
 	$_width: $sidebar_width
+	background: #ddd
 	float: left
 	padding: 4*$pad
 	width: $_width
 	+ article
 		margin-left: $_width
 
+article
+	background: #eee
+	padding: 0 2*$pad
+	> div
+		float: left
+		height: inherit
+		padding: 4*$pad 2*$pad
+		width: 50%
+		section
+			background: #fff
+			height: inherit
+
+.repl
+	font-family: $repl_font_families
+	[class$='-buffer'] li.ns:before
+		content: '\003e'
+		font-weight: bold
+	[class$='-prompt']
+		background: #eee
+		outline: none
+		width: 100%
+
+.editor
+	.CodeMirror
+		height: inherit

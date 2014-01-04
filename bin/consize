@@ -1,7 +1,10 @@
 #!/bin/sh
 
+# Get root directory of project.
 ROOT="`cd ${0%/*} && echo $PWD`/.."
-CONSIZE="$ROOT/resources/public/consize"
 
-cd ${CONSIZE}
-java -cp ${ROOT}/lib/clojure-1.5.1-slim.jar clojure.main consize.clj "\ prelude.txt run say-hi"
+# Change to resources directory.
+cd "$ROOT/resources"
+
+# Start consize.
+java -cp `lein classpath` clojure.main "$ROOT/src-clj/consize.clj" "\ prelude.txt run say-hi"

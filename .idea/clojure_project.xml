@@ -4,6 +4,7 @@
     <option name="coloredParentheses" value="true" />
     <option name="separateREPLItems" value="true" />
     <option name="useStructuralEditing" value="false" />
+    <option name="addDependentSources" value="false" />
   </component>
 </project>
 

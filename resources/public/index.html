@@ -2,10 +2,34 @@
 <html>
 <head>
 	<title>Consize as Web App</title>
+
+	<script src="js/codemirror.js"></script>
+	<script src="js/codemirror/mode/clojure.js"></script>
+	<script src="js/codemirror/matchbrackets.js"></script>
+
+	<link href="css/codemirror.css" rel="stylesheet"/>
+	<link href="css/screen.css" rel="stylesheet"/>
+
 	<script src="js/consize.js"></script>
 	<script>goog.require('consize.web.core')</script>
 </head>
 <body>
-<div id="test"></div>
+<aside>
+	<h2>Files</h2>
+	<ul id="files"></ul>
+</aside>
+<article>
+	<div>
+		<section class="repl" id="repl">
+			<ul class="repl-buffer" id="repl-buffer"></ul>
+			<textarea class="repl-prompt" id="repl-prompt"></textarea>
+		</section>
+	</div>
+	<div>
+		<section class="editor" id="editor">
+			<textarea id="editor-content">;; Dev here</textarea>
+		</section>
+	</div>
+</article>
 </body>
 </html>
