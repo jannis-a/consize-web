@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Consize" type="ClojureScriptRunConfiguration" factoryName="Clojure Script" singleton="true">
+    <module name="Consize" />
+    <setting name="path" value="$PROJECT_DIR$/resources/consize.clj" />
+    <setting name="vmparams" value="" />
+    <setting name="params" value="\ prelude.txt run say-hi" />
+    <setting name="workDir" value="$PROJECT_DIR$/resources" />
+    <setting name="repl" value="false" />
+    <method>
+      <option name="Synchronize Leiningen" enabled="true" />
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

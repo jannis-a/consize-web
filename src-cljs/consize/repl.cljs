@@ -13,6 +13,9 @@
 	(dommy/append! buffer [:li expr]))
 ;)
 
+(defn bla []
+	)
+
 (defn post-expr [buffer expr]
 	"Post expression."
 	(dommy/append! buffer [:li {:class "ns"} expr])

@@ -26,6 +26,7 @@ h1
 	font-size: 24px
 h2
 	font-size: 20px
+	margin-bottom: 2*$pad
 h3
 	font-size: $base_font_size + 2
 
@@ -50,14 +51,15 @@ article
 		padding: 4*$pad 2*$pad
 		width: 50%
 		section
+			+experimental-value(height, calc(100% - 30px))
 			background: #fff
-			height: inherit
 
 .repl
-	font-family: $repl_font_families
-	[class$='-buffer'] li.ns:before
-		content: '\003e\0020'
-		font-weight: bold
+	[class$='-buffer']
+		font-family: $repl_font_families
+		li.ns:before
+			content: '\003e\0020'
+			font-weight: bold
 	[class$='-prompt']
 		background: #eee
 		outline: none
@@ -65,4 +67,4 @@ article
 
 .editor
 	.CodeMirror
-		height: inherit
+		height: 100%

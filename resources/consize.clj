@@ -38,7 +38,7 @@
 ;; Words for stacks
 "emptystack" (fn [& r] (conj r ())),
 "push" (fn [x s & r] {:pre [(seq? s)]} (conj r (conj s x))),
-"top"  (fn [s & r] {:pre [(or (seq? s) (nil? s))]} (conj r (first s))), 
+"top"  (fn [s & r] {:pre [(or (seq? s) (nil? s))]} (conj r (first s))),
 "pop"  (fn [s & r] {:pre [(or (seq? s) (nil? s))]} (conj r (rest s))),
 "concat" (fn [s2 s1 & r] {:pre [(seq? s1) (seq? s2)]} (conj r (concat s1 s2))),
 "reverse" (fn [s & r] {:pre [(seq? s)]} (conj r (reverse s))),
@@ -121,9 +121,9 @@
 							((VM "stepcc") cs ds dict)
 							(catch Error     e (list (conj cs "error") ds dict))
 							(catch Exception e (list (conj cs "error") ds dict)))]
-						(recur cs' ds' dict'))))]	
+						(recur cs' ds' dict'))))]
 			(fn [& ds] (runcc qt (sequence ds) dict))))),
-    
+
 ;; Arithmetics
 "integer?" (fn [w & r]
 	(conj r (if (string? w) (if (integer? (read-string w)) "t" "f") "f"))),
@@ -140,5 +140,5 @@
 
 (println "Consize returns"
 	(first ((VM "apply") (first ((VM "func") VM
-					(first (apply (VM "tokenize") ((VM "uncomment") 
+					(first (apply (VM "tokenize") ((VM "uncomment")
 					(reduce str (interpose " " *command-line-args*))))))) () )))

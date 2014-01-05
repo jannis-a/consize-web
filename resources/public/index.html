@@ -19,18 +19,25 @@
 <article>
 	<div>
 		<section class="repl" id="repl">
+			<h2>REPL</h2>
 			<ul class="repl-buffer" id="repl-buffer"></ul>
 			<textarea class="repl-prompt" id="repl-prompt"></textarea>
 		</section>
 	</div>
 	<div>
 		<section class="editor" id="editor">
+			<h2>
+				Editor
+				<input id="editor-name" type="text"/>
+				<input value="Save" id="editor-save" type="button"/>
+			</h2>
 			<textarea id="editor-content"></textarea>
 		</section>
 	</div>
 </article>
 <script>
-	consize.web.init('\\ bootimage.txt run 1 [ ] 1 push 2 push 3 rot');
+//	consize.web.init('\\ bootimage.txt run foo bar [ ] 1 push 2 push 3 push rot');
+//	consize.web.init('\\ prelude.txt run say-hi');
 </script>
 </body>
 </html>

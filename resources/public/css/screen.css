@@ -64,7 +64,8 @@ h1 {
   font-size: 24px; }
 
 h2 {
-  font-size: 20px; }
+  font-size: 20px;
+  margin-bottom: 10px; }
 
 h3 {
   font-size: 14px; }
@@ -89,18 +90,22 @@ article {
     padding: 20px 10px;
     width: 50%; }
     article > div section {
-      background: white;
-      height: inherit; }
+      height: -webkit-calc(100% - 30px);
+      height: -moz-calc(100% - 30px);
+      height: -ms-calc(100% - 30px);
+      height: -o-calc(100% - 30px);
+      height: calc(100% - 30px);
+      background: white; }
 
-.repl {
+.repl [class$='-buffer'] {
   font-family: "Courier New", Courier, monospace; }
   .repl [class$='-buffer'] li.ns:before {
     content: "\003e\0020";
     font-weight: bold; }
-  .repl [class$='-prompt'] {
-    background: #eeeeee;
-    outline: none;
-    width: 100%; }
+.repl [class$='-prompt'] {
+  background: #eeeeee;
+  outline: none;
+  width: 100%; }
 
 .editor .CodeMirror {
-  height: inherit; }
+  height: 100%; }

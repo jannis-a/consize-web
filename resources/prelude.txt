@@ -354,7 +354,7 @@ SYMBOL: :else
   [ \ def ] \ def lookup serialize concat
     \ def lookup concat
   [ swapu *effect* def+ unpush -rot over
-    SYMBOL: case when if choose call t f false fcall lookup
+    SYMBOL: case when if choosfe call t f false fcall lookup
     scan4] scan4[ parse-quot destruct-definition
     : scan4; look4)
     read-word read-mapping ]

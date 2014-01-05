@@ -28,6 +28,7 @@
 
 (defn- open-file [file editor]
 	"Open file in editor."
+	(dommy/set-value! (by-id "editor-name") file)
 	(.setValue editor (slurp file)))
 
 (defn- add-file [file editor]
@@ -52,4 +53,10 @@
 	"Initialize the filesystem."
 	(let [editor (editor)]
 		(doseq [file objects]
-			(add-file file editor))))
+			(add-file file editor))
+		(dommy/listen!
+			(by-id "editor-save") :click
+			(fn [ev]
+				(spit
+					(dommy/value (by-id "editor-name"))
+					(.getValue editor))))))
