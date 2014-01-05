@@ -1,5 +1,13 @@
 (ns consize.core
-	(:use [clojure.string :only [char? split trim]]))
+	(:use [clojure.string :only [char? lower-case split trim]]
+				[cljs.reader :only [read-string]])
+	(:require [consize.filesystem :as fs]
+						;[cljs.reader :refer [read-string]]
+						))
+
+(def read-line "WUB")
+(def slurp fs/slurp)
+(def spit fs/spit)
 
 (defn- wordstack? [s] (and (not (empty? s)) (seq? s) (every? #(string? %) s)))
 
@@ -112,8 +120,8 @@
 					ds
 					(let [[cs' ds' dict']
 						(try
-							((VM "stepcc") cs ds dict)
-							 (catch js/Object e (list (conj cs "error") ds dict)))]
+							((consize.core/VM "stepcc") cs ds dict)
+							 (catch js/Error e (list (conj cs "error") ds dict)))]
 							;(catch Error     e (list (conj cs "error") ds dict))
 							;(catch Exception e (list (conj cs "error") ds dict)))]
 						;((VM "stepcc") cs ds dict)]

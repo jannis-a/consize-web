@@ -1,7 +1,7 @@
 (ns consize.repl
-	(:require [dommy.core :as dommy])
-	(:use [cljs.reader :only [read-string]])
-	(:use-macros [dommy.macros :only [by-id]]))
+	(:require [dommy.core :as dommy]
+						[consize.filesystem :as fs])
+	(:use-macros [dommy.macros :only [by-id, node]]))
 
 (defn log [args]
 	"Log to JS console."
@@ -9,8 +9,9 @@
 
 (defn- repl-print [buffer expr]
 	"Print evaluated"
-	(doseq [line (.split (str expr) #"\n")]
-		(dommy/append! buffer [:li expr])))
+	;(doseq [line (.split (str expr) #"\n")]
+	(dommy/append! buffer [:li expr]))
+;)
 
 (defn post-expr [buffer expr]
 	"Post expression."
@@ -24,6 +25,10 @@
 		;; Set the print function.
 		(set! *print-fn* #(repl-print buffer %))
 
+		;; Print test.
+		(print "Consize Web Repl")
+		(print "5 * 5 = " (* 5 5))
+
 		;; Set on-enter function.
 		(dommy/listen!
 			prompt :keyup
@@ -32,16 +37,6 @@
 					(do
 						(post-expr buffer (dommy/value prompt))
 						(dommy/set-value! prompt "")))))
-
-		;; Print test.
-		(print "Consize Web Repl")
-		(print (* 5 5))
-
-		;; Start Consize.
-		;(println "Consize returns"
-		;	(first ((VM "apply") (first ((VM "func") VM
-		;					(first (apply (VM "tokenize") ((VM "uncomment")
-		;					(reduce str (interpose " " "\\ prelude.txt run say-hi"))))))) () ))))
 
 		;; Set focus to prompt.
 		(.focus prompt)))

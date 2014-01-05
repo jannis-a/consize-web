@@ -1,47 +1,106 @@
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video { margin: 0; padding: 0; border: 0; font: inherit; font-size: 100%; vertical-align: baseline; }
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline; }
 
-html { line-height: 1; }
+html {
+  line-height: 1; }
 
-ol, ul { list-style: none; }
+ol, ul {
+  list-style: none; }
 
-table { border-collapse: collapse; border-spacing: 0; }
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
 
-caption, th, td { text-align: left; font-weight: normal; vertical-align: middle; }
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle; }
 
-q, blockquote { quotes: none; }
-q:before, q:after, blockquote:before, blockquote:after { content: ""; content: none; }
+q, blockquote {
+  quotes: none; }
+  q:before, q:after, blockquote:before, blockquote:after {
+    content: "";
+    content: none; }
 
-a img { border: none; }
+a img {
+  border: none; }
 
-article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary { display: block; }
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+  display: block; }
 
-* { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
 
-html, body { height: 100%; }
+html, body, aside, article {
+  height: 100%; }
 
-body { font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif; }
+body {
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  font-size: 12px; }
 
-h1, h2, h3 { font-weight: bold; }
+h1, h2, h3 {
+  font-weight: bold; }
 
-h1 { font-size: 24px; }
+h1 {
+  font-size: 24px; }
 
-h2 { font-size: 20px; }
+h2 {
+  font-size: 20px; }
 
-h3 { font-size: 14px; }
+h3 {
+  font-size: 14px; }
 
-label { cursor: pointer; }
+label {
+  cursor: pointer; }
 
-aside, article { height: 100%; }
+aside {
+  background: #dddddd;
+  float: left;
+  padding: 20px;
+  width: 200px; }
+  aside + article {
+    margin-left: 200px; }
 
-aside { background: #dddddd; float: left; padding: 20px; width: 200px; }
-aside + article { margin-left: 200px; }
+article {
+  background: #eeeeee;
+  padding: 0 10px; }
+  article > div {
+    float: left;
+    height: inherit;
+    padding: 20px 10px;
+    width: 50%; }
+    article > div section {
+      background: white;
+      height: inherit; }
 
-article { background: #eeeeee; padding: 0 10px; }
-article > div { float: left; height: inherit; padding: 20px 10px; width: 50%; }
-article > div section { background: white; height: inherit; }
+.repl {
+  font-family: "Courier New", Courier, monospace; }
+  .repl [class$='-buffer'] li.ns:before {
+    content: "\003e\0020";
+    font-weight: bold; }
+  .repl [class$='-prompt'] {
+    background: #eeeeee;
+    outline: none;
+    width: 100%; }
 
-.repl { font-family: "Courier New", Courier, monospace; }
-.repl [class$='-buffer'] li.ns:before { content: "\003e"; font-weight: bold; }
-.repl [class$='-prompt'] { background: #eeeeee; outline: none; width: 100%; }
-
-.editor .CodeMirror { height: inherit; }
+.editor .CodeMirror {
+  height: inherit; }

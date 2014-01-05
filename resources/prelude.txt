@@ -4,7 +4,7 @@
 
 % A TINY BOOTIMAGE
 
-init bootimage.txt run
+\ bootimage.txt run
 
 % DEFINITION OF META-WORDS
 

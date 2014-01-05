@@ -3,15 +3,13 @@
 <head>
 	<title>Consize as Web App</title>
 
-	<script src="js/codemirror.js"></script>
-	<script src="js/codemirror/mode/clojure.js"></script>
-	<script src="js/codemirror/matchbrackets.js"></script>
-
 	<link href="css/codemirror.css" rel="stylesheet"/>
 	<link href="css/screen.css" rel="stylesheet"/>
 
+	<script src="js/codemirror.js"></script>
+	<script src="js/codemirror/clojure.js"></script>
+	<script src="js/codemirror/matchbrackets.js"></script>
 	<script src="js/consize.js"></script>
-	<script>goog.require('consize.web.core')</script>
 </head>
 <body>
 <aside>
@@ -27,9 +25,12 @@
 	</div>
 	<div>
 		<section class="editor" id="editor">
-			<textarea id="editor-content">;; Dev here</textarea>
+			<textarea id="editor-content"></textarea>
 		</section>
 	</div>
 </article>
+<script>
+	consize.web.init();
+</script>
 </body>
 </html>

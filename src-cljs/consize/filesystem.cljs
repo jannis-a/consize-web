@@ -1,8 +1,6 @@
 (ns consize.filesystem
 	(:require [dommy.core :as dommy])
-	(:use-macros [dommy.macros :only [node, by-id]]))
-
-(def *editor*)
+	(:use-macros [dommy.macros :only [by-id, node]]))
 
 (def storage
 	"JS localStorage."
@@ -22,23 +20,23 @@
 	(.setItem storage file content))
 
 (defn- map->js [m]
-	"Make map JS compatible."
+	"Make functional map JS compatible."
 	(let [out (js-obj)]
 		(doseq [[k v] m]
 			(aset out (name k) v))
 		out))
 
-(defn- open-file [file]
+(defn- open-file [file editor]
 	"Open file in editor."
-	(.setValue *editor* (slurp file)))
+	(.setValue editor (slurp file)))
 
-(defn- add-file [file]
+(defn- add-file [file editor]
 	"Append all JS localStorage objects to list."
 	(let [item (node [:li file])]
 		(dommy/append! (by-id "files") item)
 		(dommy/listen!
 			item :click
-			(fn [ev] (open-file file)))))
+			(fn [ev] (open-file file editor)))))
 
 (defn- editor []
 	"Create a CodeMirror editor from textarea."
@@ -52,6 +50,6 @@
 
 (defn init []
 	"Initialize the filesystem."
-	(doseq [file objects]
-		(add-file file))
-	(set! *editor* (editor)))
+	(let [editor (editor)]
+		(doseq [file objects]
+			(add-file file editor))))
