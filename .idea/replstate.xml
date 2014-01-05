@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ReplState" timestamp="1388848968909">{:repl-history {:ide [], :local [&quot;(defn pow [x] (* x x))&quot; &quot;(require '[cljs.repl :as repl])&quot; &quot;(require '[cljs.repl.rhino :as rhino])&quot;], :remote []}}</component>
+  <component name="ReplState" timestamp="1388886292485">{:repl-history {:ide [], :local [&quot;(defn pow [x] (* x x))&quot; &quot;(require '[cljs.repl :as repl])&quot; &quot;(require '[cljs.repl.rhino :as rhino])&quot;], :remote []}}</component>
 </project>
 

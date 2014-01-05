@@ -28045,20 +28045,19 @@ consize.repl.init = function init() {
 };
 goog.provide("consize.web");
 goog.require("cljs.core");
+goog.require("clojure.string");
 goog.require("consize.repl");
 goog.require("consize.repl");
 goog.require("consize.filesystem");
 goog.require("consize.filesystem");
 goog.require("consize.core");
 goog.require("consize.core");
+goog.require("clojure.string");
 consize.web.VM = consize.core.VM;
-consize.web.init = function init() {
+consize.web.init = function init(args) {
+  consize.web._STAR_command_line_args_STAR_ = clojure.string.split.call(null, args, /\s+/);
   consize.filesystem.init.call(null);
-  return consize.repl.init.call(null);
+  consize.repl.init.call(null);
+  return cljs.core.println.call(null, "Consize returns", cljs.core.first.call(null, consize.web.VM.call(null, "apply").call(null, cljs.core.first.call(null, consize.web.VM.call(null, "func").call(null, consize.web.VM, cljs.core.first.call(null, cljs.core.apply.call(null, consize.web.VM.call(null, "tokenize"), consize.web.VM.call(null, "uncomment").call(null, cljs.core.reduce.call(null, cljs.core.str, cljs.core.interpose.call(null, " ", consize.web._STAR_command_line_args_STAR_))))))), cljs.core.List.EMPTY)));
 };
 goog.exportSymbol("consize.web.init", consize.web.init);
-consize.web.start = function start() {
-  return cljs.core.println.call(null, "Consize returns", cljs.core.first.call(null, consize.web.VM.call(null, "apply").call(null, cljs.core.first.call(null, consize.web.VM.call(null, "func").call(null, consize.web.VM, cljs.core.first.call(null, cljs.core.apply.call(null, consize.web.VM.call(null, "tokenize"), consize.web.VM.call(null, "uncomment").call(null, cljs.core.reduce.call(null, cljs.core.str, cljs.core.interpose.call(null, " ", new cljs.core.PersistentVector(null, 4, 5, cljs.core.PersistentVector.EMPTY_NODE, 
-  ["\\", "prelude.txt", "run", "say-hi"], null)))))))), cljs.core.List.EMPTY)));
-};
-goog.exportSymbol("consize.web.start", consize.web.start);
