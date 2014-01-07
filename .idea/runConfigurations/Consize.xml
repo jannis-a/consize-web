@@ -6,9 +6,12 @@
     <setting name="params" value="\ prelude.txt run say-hi" />
     <setting name="workDir" value="$PROJECT_DIR$/resources" />
     <setting name="repl" value="false" />
-    <method>
-      <option name="Synchronize Leiningen" enabled="true" />
-      <option name="Make" enabled="true" />
-    </method>
+    <RunnerSettings RunnerId="Debug">
+      <option name="DEBUG_PORT" value="" />
+      <option name="TRANSPORT" value="0" />
+      <option name="LOCAL" value="true" />
+    </RunnerSettings>
+    <ConfigurationWrapper RunnerId="Debug" />
+    <method />
   </configuration>
 </component>

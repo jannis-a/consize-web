@@ -1,14 +1,23 @@
 (ns consize.core
-	(:use [clojure.string :only [char? lower-case split trim]]
+	(:use [clojure.string :only [lower-case split trim]]
 				[cljs.reader :only [read-string]])
 	(:require [consize.filesystem :as fs]
 						[consize.repl :as repl]))
 
-;(def read-line repl/bla)
+;(defn char? [s]
+;	(= "\n" (.substring "\newline" 0 1)))
+(defn char? [x]
+	(.log js/console x (and (string? x) (= (count x) 1)))
+	(and (string? x) (= (count x) 1)))
+(def read-line repl/read-line)
+(def flush repl/flush)
 (def slurp fs/slurp)
 (def spit fs/spit)
 
-(defn- wordstack? [s] (and (not (empty? s)) (seq? s) (every? #(string? %) s)))
+
+(defn- wordstack? [s]
+	(.log js/console s)
+	(and (not (empty? s)) (seq? s) (every? #(string? %) s)))
 
 (defn- binary [op]
 	(fn [y x & r] {:pre [(integer? (read-string x)) (integer? (read-string y))]}
@@ -120,8 +129,9 @@
 					(let [[cs' ds' dict']
 						(try
 							((VM "stepcc") cs ds dict)
-							 (catch Error     e (list (conj cs "error") ds dict))
-							 (catch Exception e (list (conj cs "error") ds dict)))]
+							;(catch js/Error e (list (conj cs "error") ds dict)))]
+							(catch Error     e (list (conj cs "error") ds dict))
+							(catch Exception e (list (conj cs "error") ds dict)))]
 						(recur cs' ds' dict'))))]
 			(fn [& ds] (runcc qt (sequence ds) dict))))),
 
@@ -130,7 +140,7 @@
 	(conj r (if (string? w) (if (integer? (read-string w)) "t" "f") "f"))),
 "+" (binary +), "-" (binary -), "*" (binary *),
 "div" (binary quot), "mod" (binary mod),
-		"<" (pred <), ">" (pred >), "==" (pred ==), "<=" (pred <=), ">=" (pred >=),
+	"<" (pred <), ">" (pred >), "==" (pred ==), "<=" (pred <=), ">=" (pred >=),
 
 ;; Escaping words with '\'
 "\\"   '(("dup" "top" "rot" "swap" "push" "swap" "pop" "continue") "call/cc"),
@@ -142,4 +152,4 @@
 ;(println "Consize returns"
 ;	(first ((VM "apply") (first ((VM "func") VM
 ;					(first (apply (VM "tokenize") ((VM "uncomment")
-;					(reduce str (interpose " " "\\ prelude.txt run say-hi"))))))) () )))
+;					(reduce str (interpose " " *command-line-args*))))))) () )))

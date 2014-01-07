@@ -8,9 +8,6 @@
     <setting name="workingDir" value="$PROJECT_DIR$" />
     <RunnerSettings RunnerId="Local REPL Run" />
     <ConfigurationWrapper RunnerId="Local REPL Run" />
-    <method>
-      <option name="Synchronize Leiningen" enabled="true" />
-      <option name="Make" enabled="true" />
-    </method>
+    <method />
   </configuration>
 </component>

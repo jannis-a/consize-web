@@ -20,5 +20,5 @@
 				:pretty-print true}}]}
 	;; Hook the cljsbuild task to Leiningen compile task.
 	;:hooks [leiningen.cljsbuild]
-	:main consize.cli
+	:main cli
 	:min-lein-version "2.0.0")

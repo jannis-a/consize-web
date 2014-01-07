@@ -4,16 +4,26 @@
 						[consize.filesystem :as fs]
 						[consize.repl :as repl]))
 
+(def *command-line-args*)
 (def VM core/VM)
 
-(defn ^:export init [args]
+(set! (.-onload js/window)
+			(fn []
+				"Initiliaze filesystem and repl."
+				(fs/init)
+				(repl/init)))
+
+;(defn ^:export init []
+;	"Initiliaze filesystem and repl."
+;	(fs/init)
+;	(repl/init))
+
+(defn ^:export start [args]
 	"Initiliaze filesystem and repl."
 	(set! *command-line-args* (split args #"\s+"))
-
-	(fs/init)
-	(repl/init)
 
 	(println "Consize returns"
 		(first ((VM "apply") (first ((VM "func") VM
 						(first (apply (VM "tokenize") ((VM "uncomment")
-						(reduce str (interpose " " *command-line-args*))))))) ()))))
+						(reduce str (interpose " " *command-line-args*))))))) ())))
+	)

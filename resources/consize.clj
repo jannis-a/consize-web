@@ -129,7 +129,7 @@
 	(conj r (if (string? w) (if (integer? (read-string w)) "t" "f") "f"))),
 "+" (binary +), "-" (binary -), "*" (binary *),
 "div" (binary quot), "mod" (binary mod),
-    "<" (pred <), ">" (pred >), "==" (pred ==), "<=" (pred <=), ">=" (pred >=),
+	"<" (pred <), ">" (pred >), "==" (pred ==), "<=" (pred <=), ">=" (pred >=),
 
 ;; Escaping words with '\'
 "\\"   '(("dup" "top" "rot" "swap" "push" "swap" "pop" "continue") "call/cc"),
