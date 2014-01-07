@@ -7,19 +7,18 @@
 (def *command-line-args*)
 (def VM core/VM)
 
+
+
 (set! (.-onload js/window)
+;(.ready (js/jQuery js/document)
 			(fn []
 				"Initiliaze filesystem and repl."
+				;(.log js/console "\newlineasasddd")
 				(fs/init)
-				(repl/init)))
-
-;(defn ^:export init []
-;	"Initiliaze filesystem and repl."
-;	(fs/init)
-;	(repl/init))
+				(repl/init "#console")))
 
 (defn ^:export start [args]
-	"Initiliaze filesystem and repl."
+	"Start Consize."
 	(set! *command-line-args* (split args #"\s+"))
 
 	(println "Consize returns"

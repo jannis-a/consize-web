@@ -51,13 +51,12 @@
 
 (defn init []
 	"Initialize the filesystem."
-	;(let [editor (editor)]
+	(let [editor (editor)]
 		(doseq [file objects]
 			(add-file file editor))
-		;(dommy/listen!
-		;	(by-id "editor-save") :click
-		;	(fn [ev]
-		;		(spit
-		;			(dommy/value (by-id "editor-name"))
-		;			(.getValue editor))))))
-	)
+		(dommy/listen!
+			(by-id "editor-save") :click
+			(fn [ev]
+				(spit
+					(dommy/value (by-id "editor-name"))
+					(.getValue editor))))))

@@ -6,11 +6,15 @@
 
 ;(defn char? [s]
 ;	(= "\n" (.substring "\newline" 0 1)))
+
 (defn char? [x]
 	(.log js/console x (and (string? x) (= (count x) 1)))
-	(and (string? x) (= (count x) 1)))
-(def read-line repl/read-line)
-(def flush repl/flush)
+	(and (string? x) (= (count x) 1))
+	;true
+	)
+
+;(def read-line repl/read-line)
+;(def flush repl/flush)
 (def slurp fs/slurp)
 (def spit fs/spit)
 
@@ -129,9 +133,11 @@
 					(let [[cs' ds' dict']
 						(try
 							((VM "stepcc") cs ds dict)
+							(catch e (list (conj cs "error") ds dict)))]
+							;(catch js/Object e (list (conj cs "error") ds dict)))]
 							;(catch js/Error e (list (conj cs "error") ds dict)))]
-							(catch Error     e (list (conj cs "error") ds dict))
-							(catch Exception e (list (conj cs "error") ds dict)))]
+							;(catch Error     e (list (conj cs "error") ds di ct))
+							;(catch Exception e (list (conj cs "error") ds dict)))]
 						(recur cs' ds' dict'))))]
 			(fn [& ds] (runcc qt (sequence ds) dict))))),
 

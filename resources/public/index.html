@@ -6,6 +6,9 @@
 	<link href="css/codemirror.css" rel="stylesheet"/>
 	<link href="css/screen.css" rel="stylesheet"/>
 
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="../jq-console/jqconsole.min.js"></script>
 	<script src="js/codemirror.js"></script>
 	<script src="js/codemirror/clojure.js"></script>
 	<script src="js/codemirror/matchbrackets.js"></script>
@@ -20,8 +23,9 @@
 	<div>
 		<section class="repl" id="repl">
 			<h2>REPL</h2>
-			<ul class="repl-buffer" id="repl-buffer"></ul>
-			<textarea class="repl-prompt" id="repl-prompt"></textarea>
+			<div id="console"></div>
+			<!--<ul class="repl-buffer" id="repl-buffer"></ul>-->
+			<!--<textarea class="repl-prompt" id="repl-prompt"></textarea>-->
 		</section>
 	</div>
 	<div>
