@@ -10,12 +10,11 @@
 								 [org.clojure/clojurescript "0.0-2138"]
 								 [prismatic/dommy "0.1.1"]]
 	:plugins [[lein-cljsbuild "1.0.0-alpha2"]]
-	:source-paths ["src-clj" "src-cljs"]
-	:main consize.cli
 	:cljsbuild {
 		:builds [{
+			:source-paths ["src"]
 			:compiler {
 				:output-to "resources/public/js/consize.js"
-				:optimizations :whitespace
-				:pretty-print true}}]}
+				:optimizations :whitespace}}]}
+	:main consize.cli
 	:min-lein-version "2.0.0")
