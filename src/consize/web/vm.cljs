@@ -1,9 +1,7 @@
 (ns consize.web.vm
-	(:use [clojure.string :only [lower-case replace split trim]])
-	(:require [cljs.reader :refer [read-string]]
-						[consize.web.filesystem :refer [slurp spit]]
-						;[consize.web.repl :refer [read-line flush]]
-	))
+	(:use [clojure.string :only [lower-case split trim]])
+	(:require [cljs.reader :as reader]
+						[consize.web.filesystem :refer [slurp spit]]))
 
 (defn log-js [args]
 	(.log js/console args))
@@ -11,29 +9,23 @@
 (def Error :default)
 (def Exception Error)
 
-(def flush (fn []
-						 ;(log-js "FLUSH")
-						 ));repl/flush)
-(def read-line (fn []
-								 ;(log-js "FLUSH")
-								 ));repl/read-line)
+(def flush
+	(fn []
+		(log-js "FLUSH")))
 
-;(defn read-string [s]
-;	(log-js s)
-;	(let [c (str "\\" (reader/read-string s))]
-;		(if (= c "\\s")
-;			(str " ")
-;			c)))
+(def read-line
+	(fn []
+		(log-js "FLUSH")))
 
-(defn char? [x]
-	(string? x))
-	;(and (string? x) (= (count x) 1)))
-	;(or (= (count x) 2)
-	;(and (= x " ") (= (count x) 1)))))
+(defn read-string [s]
+	"Work-around for broken read-string."
+	(cond
+		(identical? s "\\tab")     "\t"
+		(identical? s "\\space")   " "
+		(identical? s "\\newline") "\n"
+		:else (reader/read-string s)))
 
-(defn- wordstack? [s]
-	;(log-js s)
-	(and (not (empty? s)) (seq? s) (every? #(string? %) s)))
+(defn- wordstack? [s] (and (not (empty? s)) (seq? s) (every? #(string? %) s)))
 
 (defn- binary [op]
 	(fn [y x & r] {:pre [(integer? (read-string x)) (integer? (read-string y))]}
@@ -82,10 +74,8 @@
 ;; Words for Words
 "word" (fn [s & r] {:pre [(wordstack? s)]} (conj r (reduce str s))),
 "unword" (fn [w & r] {:pre [w (string? w)]} (conj r (map str (seq w)))),
-"char" (fn [w & r] {:pre [(string? w) (char? (read-string w))]}
-	(let [rs w]
-		;(log-js rs)
-		(conj r (str rs)))),
+"char" (fn [w & r] {:pre [(string? w)]}; (char? (read-string w))]}
+	(conj r (read-string w))),
 ; "repr-word" (fn [w & r] {:pre [w (string? w)]} (conj r w)),
 
 ;; Words for I/O (console i.e. stdin/stdout)
@@ -147,9 +137,8 @@
 					(let [[cs' ds' dict']
 						(try
 							((VM "stepcc") cs ds dict)
-							(catch :default e (list (conj cs "error") ds dict)))]
-							;(catch Error     e (list (conj cs "error") ds dict))
-							;(catch Exception e (list (conj cs "error") ds dict)))]
+							(catch Error     e (list (conj cs "error") ds dict))
+							(catch Exception e (list (conj cs "error") ds dict)))]
 						(recur cs' ds' dict'))))]
 			(fn [& ds] (runcc qt (sequence ds) dict))))),
 

@@ -19,10 +19,7 @@
 	(log-js "READ-LINE")
 	*in*)
 
-(defn init []
-	(set! *out* (.jqconsole (js/$ "#repl")))
-	(set! *print-fn* #(.Write *out* %1))
-
+(defn- prompt []
 	(.Prompt
 		*out* "true"
 		(fn [input]
@@ -31,7 +28,11 @@
 			(println "Consize returns"
 				(first ((VM "apply") (first ((VM "func") VM
 								(first (apply (VM "tokenize") ((VM "uncomment")
-								(reduce str (interpose " " (split input #"\s+")))))))) ())))))
+								(reduce str (interpose " " (split input #"\s+")))))))) ()))))))
 
+(defn init []
+	(set! *out* (.jqconsole (js/$ "#repl")))
+	(set! *print-fn* #(.Write *out* %1))
 
+	(prompt)
 	(.Focus *out*))

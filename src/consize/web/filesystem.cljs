@@ -7,20 +7,20 @@
 	(.-localStorage js/window))
 
 (def objects
-	"List with all JS localStorage objects."
+	"List with all localStorage objects."
 	(for [file (range 0 (.-length storage))]
 		(.key storage file)))
 
 (defn slurp [file]
-	"Read from JS localStorage."
+	"Read from localStorage."
 	(.getItem storage file))
 
-(defn spit [file content]
-	"Save to JS localStorage."
+(defn spit [file content & options]
+	"Save to localStorage."
 	(.setItem storage file content))
 
 (defn- map->js [m]
-	"Make functional map JS compatible."
+	"Transform functional map to JS map."
 	(let [out (js-obj)]
 		(doseq [[k v] m]
 			(aset out (name k) v))
@@ -34,7 +34,9 @@
 (defn- add-file [file editor]
 	"Append all JS localStorage objects to list."
 	(let [item (node [:li file])]
+		;; Add object to list.
 		(dommy/append! (by-id "files") item)
+		;; Add click-listener to object.
 		(dommy/listen!
 			item :click
 			(fn [ev] (open-file file editor)))))
@@ -43,19 +45,24 @@
 	"Create a CodeMirror editor from textarea."
 	(doto
 			(js/CodeMirror.
+				;; Replace DOM with editor.
 				(fn [dom]
 					(dommy/replace! (by-id "editor") dom))
+				;; Editor options.
 				(map->js {:lineNumbers      true
 									:matchBrackets    true
 									:lineWrapping:    true
 									:styleActiveLine: true}))
+		;; Default editor text.
 		(.setValue ";; Develop here...")))
 
 (defn init []
-	"Initialize the filesystem."
+	"Initialize the filesystem with editor."
 	(let [editor (editor)]
+		;; Add all localStorage objects to list.
 		(doseq [file objects]
 			(add-file file editor))
+		;; Save button.
 		(dommy/listen!
 			(by-id "file-save") :click
 			(fn [ev]
