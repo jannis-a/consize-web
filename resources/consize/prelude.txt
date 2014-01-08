@@ -53,7 +53,7 @@
 
 : call ( [ quot & ds ] cs -- ds quot cs concat )
   [ swap unpush rot concat continue ] call/cc ;
-: fcall ( quot -- seq ) get-dict func ( ) swap apply reverse ;  
+: fcall ( quot -- seq ) get-dict func ( ) swap apply reverse ;
 
 % BOOLEAN VALUES, BOOLEAN CHOICE
 % http://docs.factorcode.org/content/article-booleans.html
@@ -85,7 +85,7 @@ SYMBOL: f
 : when* ( f/* then -- ... ) over [ call ] [ 2drop ] if ; % Factor
 : unless* ( f/* else -- ... ) over [ drop ] [ nip call ] if ; % Factor
 
-SYMBOL: :else 
+SYMBOL: :else
 : case ( val { val' quot ... } -- ... )
   :else over [ ] get get call ;
 
@@ -226,14 +226,14 @@ SYMBOL: :else
 %
 % http://docs.factorcode.org/content/article-looping-combinators.html
 
-: loop ( pred -- ... ) [ call ] keep [ loop ] curry when ;  
+: loop ( pred -- ... ) [ call ] keep [ loop ] curry when ;
 : do ( pred quot -- pred quot ) dup 2dip ;
 : while ( pred quot -- ... ) swap do concat [ loop ] curry when ;
 : until ( pred quot -- ... ) [ [ not ] concat ] dip while ;
 
 : [a,b] ( a b -- seq )
-  ( ) -rot [ 2dup <= ] [ rot over push -rot 1 - ] while 2drop ; 
-: [a,b) ( a b -- seq ) 1 - [a,b] ; 
+  ( ) -rot [ 2dup <= ] [ rot over push -rot 1 - ] while 2drop ;
+: [a,b) ( a b -- seq ) 1 - [a,b] ;
 
 : X ( quot -- ... ) dup call ;
 
@@ -259,7 +259,7 @@ SYMBOL: :else
   { \ ]   [ drop ( ) rot scan4[ ]
     \ }   over
     \ )   over
-    \ [   [ rot cons swap scan4] scan4] ] 
+    \ [   [ rot cons swap scan4] scan4] ]
     \ {   over
     \ (   over
     \ \   [ drop unpush rot cons \ \ push swap scan4] ]
@@ -272,7 +272,7 @@ SYMBOL: :else
   { \ [   [ drop swap               push swap ]
     \ {   [ drop swap fcall mapping push swap ]
     \ (   [ drop swap fcall         push swap ]
-    \ \   [ drop unpush rot cons \ \ push swap scan4[ ] 
+    \ \   [ drop unpush rot cons \ \ push swap scan4[ ]
     :else [ rot cons swap scan4[ ]
     nil   [ \ syntax-error [ unbalanced brackets ] _|_ ]
   } case ;
@@ -285,7 +285,7 @@ SYMBOL: :else
 : def ( wrd itm -- ) swap get-dict assoc set-dict ;
 : def+ ( wrd [ effect ] [ body ] -- ) swap drop def ;
 
-: : ( | ... '; -- quot ) 
+: : ( | ... '; -- quot )
   [ ( ) swap scan4; destruct-definition def+ continue ] call/cc ;
 
 : scan4; ( ds [ ] cs -- ds cs' quot )
@@ -296,7 +296,7 @@ SYMBOL: :else
     nil   [ \ syntax-error [ incomplete definition ] _|_ ]
   } case ;
 
-: destruct-definition ( quot -- wrd stackeffect body ) 
+: destruct-definition ( quot -- wrd stackeffect body )
   uncons                % extract word
   ( ) swap              % prepare extraction of stack effect
   dup top \ ( equal?    % extract stack effect
@@ -314,7 +314,7 @@ SYMBOL: :else
 : SYMBOL: ( | itm -- )
   [ unpush dup ( \ ; ) cons \ \ push cons \ : push
     swap concat continue ] call/cc ;
-  
+
 % PRINTING
 
 : <space> ( -- space ) \space char ;
@@ -322,10 +322,10 @@ SYMBOL: :else
 
 : println ( -- ) print <newline> print flush ;
 
-: repr ( itm -- wrd ) 
+: repr ( itm -- wrd )
   dup type
   { \ wrd [ ]
-    \ stk [ ( ) \ [ push <space> push swap 
+    \ stk [ ( ) \ [ push <space> push swap
             [ repr push <space> push ] each
             \ ] push reverse word ]
     \ map [ unmap ( ) \ { push <space> push swap
@@ -388,24 +388,24 @@ SYMBOL: :else
 % UNIT-TESTING
 
 : unit-test ( result quot -- )
-  [ \ test print [ <space> print repr print ] bi@ ] 2keep 
+  % [ \ test print [ <space> print repr print ] bi@ ] 2keep
   [ fcall equal? ] 2keep
   rot
-    [ <space> print \ passed println 2drop ]
-    [ <space> print \ failed println \ with print <space> print
-      nip fcall repr println abort ]
+    % [ <space> print \ passed println 2drop ]
+    % [ <space> print \ failed println \ with print <space> print
+    %  nip fcall repr println abort ]
   if ;
 
 % SERIALIZATION & DUMPING
 
 : serialize ( quot -- quot' )
-  get-ds [ clear ] dip uncons     
+  get-ds [ clear ] dip uncons
   [ -serialize- get-ds ] dip
   swap reverse push set-ds ;
 
 : -serialize- ( item -- stream-of-items )
   dup type
-  { \ wrd [ \ \ swap ] 
+  { \ wrd [ \ \ swap ]
     \ stk [ \ emptystack swap reverse [ -serialize- \ push ] each ]
     \ map [ unmap -serialize- \ mapping ]
     \ nil [ drop \ emptystack \ top ]
