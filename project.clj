@@ -16,5 +16,18 @@
 			:compiler {
 				:output-to "resources/public/js/consize.js"
 				:optimizations :whitespace}}]}
+	;:profiles {
+	;	:dev {
+	;		:cljsbuild {
+	;			:builds [{
+	;				:compiler {
+	;					:output-to "resources/public/js/consize.js"
+	;					:optimizations :whitespace}}]}}
+	;	:production {
+	;		:cljsbuild {
+	;			:builds [{
+	;				:compiler {
+	;					:output-to "resources/public/js/consize.js"
+	;					:optimizations :advanced}}]}}}
 	:main consize.cli
 	:min-lein-version "2.0.0")

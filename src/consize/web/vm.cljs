@@ -17,11 +17,11 @@
 	(fn []
 		(log-js "FLUSH")))
 
-(defn read-string [s]
+(defn- read-string [s]
 	"Work-around for broken read-string."
 	(cond
 		(identical? s "\\tab")     "\t"
-		(identical? s "\\space")   " "
+		(identical? s (or "\\space" \s))   " "
 		(identical? s "\\newline") "\n"
 		:else (reader/read-string s)))
 

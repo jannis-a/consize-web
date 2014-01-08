@@ -1,8 +1,6 @@
 (ns consize.web.repl
 	(:use [clojure.string :only [split]])
-	(:require ;[consize.web.core :as consize])
-						[consize.web.vm :as consize])
-	)
+	(:require [consize.web.vm :as consize]))
 
 (def VM consize/VM)
 (def *out*)
@@ -20,6 +18,7 @@
 	*in*)
 
 (defn- prompt []
+	"Start a repl prompt."
 	(.Prompt
 		*out* "true"
 		(fn [input]
@@ -31,8 +30,13 @@
 								(reduce str (interpose " " (split input #"\s+")))))))) ()))))))
 
 (defn init []
+	"Initialize the repl and set print-fn."
 	(set! *out* (.jqconsole (js/$ "#repl")))
 	(set! *print-fn* #(.Write *out* %1))
+
+	(.RegisterShortcut *out* "55"
+										 (fn []
+											 (.SetPromptText *out* "\\")))
 
 	(prompt)
 	(.Focus *out*))

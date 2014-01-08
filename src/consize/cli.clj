@@ -1,6 +1,5 @@
 (ns consize.cli
-	(:require [consize.core :as core]))
+	(:require [consize.core :as consize]))
 
 (defn -main [& args]
-	;(ns consize.core)
-	(core/init))
+	(consize/init))
