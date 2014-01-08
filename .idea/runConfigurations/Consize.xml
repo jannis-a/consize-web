@@ -3,7 +3,7 @@
     <module name="Consize" />
     <setting name="path" value="$PROJECT_DIR$/resources/consize.clj" />
     <setting name="vmparams" value="" />
-    <setting name="params" value="\ bootimage.txt run emptystack 3" />
+    <setting name="params" value="\ prelude.txt run say-hi" />
     <setting name="workDir" value="$PROJECT_DIR$/resources" />
     <setting name="repl" value="false" />
     <RunnerSettings RunnerId="Debug">

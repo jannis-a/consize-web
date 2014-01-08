@@ -5,7 +5,7 @@ $pad: 5px
 
 $sidebar_width: 200px
 
-$base_font_size: 12px
+$base_font_size: 14px
 $base_font_families: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif
 
 $repl_font_families: 'Courier New', Courier, monospace
@@ -30,9 +30,6 @@ h2
 h3
 	font-size: $base_font_size + 2
 
-label
-	cursor: pointer
-
 aside
 	$_width: $sidebar_width
 	background: #ddd
@@ -51,20 +48,22 @@ article
 		padding: 4*$pad 2*$pad
 		width: 50%
 		section
-			+experimental-value(height, calc(100% - 30px))
+			height: inherit
 			background: #fff
 
-.repl
-	[class$='-buffer']
-		font-family: $repl_font_families
-		li.ns:before
-			content: '\003e\0020'
-			font-weight: bold
-	[class$='-prompt']
-		background: #eee
-		outline: none
-		width: 100%
 
-.editor
-	.CodeMirror
-		height: 100%
+#repl
+	font-family: $repl_font_families
+	font-size: $base_font_size
+	height: inherit
+	position: relative
+	width: 100%
+	.jqconsole-cursor
+		background: black
+	.jqconsole-header
+		font-weight: bold
+
+.CodeMirror
+	height: inherit
+	.CodeMirror-activeline-background
+		background: lightgrey

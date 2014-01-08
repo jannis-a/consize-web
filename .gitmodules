@@ -1,3 +1,6 @@
-[submodule "resources/jq-console"]
+[submodule "jq-console"]
 	path = resources/jq-console
 	url = https://github.com/replit/jq-console.git
+[submodule "CodeMirror"]
+	path = resources/codemirror
+	url = https://github.com/marijnh/CodeMirror.git

@@ -1,4 +1,4 @@
-(ns consize.filesystem
+(ns consize.web.filesystem
 	(:require [dommy.core :as dommy])
 	(:use-macros [dommy.macros :only [by-id, node]]))
 
@@ -42,11 +42,13 @@
 (defn- editor []
 	"Create a CodeMirror editor from textarea."
 	(doto
-			(.fromTextArea js/CodeMirror
-										 (by-id "editor-content")
-										 (map->js {:mode          "clojure"
-															 :lineNumbers   true
-															 :matchBrackets true}))
+			(js/CodeMirror.
+				(fn [dom]
+					(dommy/replace! (by-id "editor") dom))
+				(map->js {:lineNumbers      true
+									:matchBrackets    true
+									:lineWrapping:    true
+									:styleActiveLine: true}))
 		(.setValue ";; Develop here...")))
 
 (defn init []

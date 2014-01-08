@@ -1,0 +1,19 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Consize" type="LeiningenRunConfiguration" factoryName="Leiningen" singleton="true">
+    <LeiningenRunnerParameters>
+      <option name="goals">
+        <list>
+          <option value="run" />
+          <option value="\" />
+          <option value="prelude.txt" />
+          <option value="run" />
+          <option value="say-hi" />
+        </list>
+      </option>
+      <option name="workingDirectory" value="$PROJECT_DIR$" />
+    </LeiningenRunnerParameters>
+    <RunnerSettings RunnerId="Run" />
+    <ConfigurationWrapper RunnerId="Run" />
+    <method />
+  </configuration>
+</component>

@@ -55,7 +55,7 @@ html, body, aside, article {
 
 body {
   font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-  font-size: 12px; }
+  font-size: 14px; }
 
 h1, h2, h3 {
   font-weight: bold; }
@@ -68,10 +68,7 @@ h2 {
   margin-bottom: 10px; }
 
 h3 {
-  font-size: 14px; }
-
-label {
-  cursor: pointer; }
+  font-size: 16px; }
 
 aside {
   background: #dddddd;
@@ -90,22 +87,21 @@ article {
     padding: 20px 10px;
     width: 50%; }
     article > div section {
-      height: -webkit-calc(100% - 30px);
-      height: -moz-calc(100% - 30px);
-      height: -ms-calc(100% - 30px);
-      height: -o-calc(100% - 30px);
-      height: calc(100% - 30px);
+      height: inherit;
       background: white; }
 
-.repl [class$='-buffer'] {
-  font-family: "Courier New", Courier, monospace; }
-  .repl [class$='-buffer'] li.ns:before {
-    content: "\003e\0020";
-    font-weight: bold; }
-.repl [class$='-prompt'] {
-  background: #eeeeee;
-  outline: none;
+#repl {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  height: inherit;
+  position: relative;
   width: 100%; }
+  #repl .jqconsole-cursor {
+    background: black; }
+  #repl .jqconsole-header {
+    font-weight: bold; }
 
-.editor .CodeMirror {
-  height: 100%; }
+.CodeMirror {
+  height: inherit; }
+  .CodeMirror .CodeMirror-activeline-background {
+    background: lightgrey; }
