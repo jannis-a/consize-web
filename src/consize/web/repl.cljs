@@ -1,42 +1,43 @@
 (ns consize.web.repl
-	(:use [clojure.string :only [split]])
-	(:require [consize.web.vm :as consize]))
+	(:use [clojure.string :only [split]]
+				[consize.web.helpers :only [log]]
+				[consize.web.vm :only [VM]]))
 
-(def VM consize/VM)
-(def *out*)
-(def *in*)
-
-(defn log-js [args]
-	(.log js/console args))
-
-(defn flush []
-	(log-js "FLUSH")
-	(set! *in* ""))
+(def wub)
 
 (defn read-line []
-	(log-js "READ-LINE")
-	*in*)
+	(log "> read-line")
+	(.Prompt wub "true"
+					 (fn [ds] ds)
+					 (fn [ds] (nil? ds)))
+	(.Focus wub))
 
-(defn- prompt []
-	"Start a repl prompt."
-	(.Prompt
-		*out* "true"
-		(fn [input]
-			(set! *in* input)
-			;(consize/start input)
-			(println "Consize returns"
-				(first ((VM "apply") (first ((VM "func") VM
-								(first (apply (VM "tokenize") ((VM "uncomment")
-								(reduce str (interpose " " (split input #"\s+")))))))) ()))))))
+(defn flush []
+	(log "> flush"))
 
-(defn init []
-	"Initialize the repl and set print-fn."
-	(set! *out* (.jqconsole (js/$ "#repl")))
-	(set! *print-fn* #(.Write *out* %1))
+(defn start-prompt [repl]
+	"Start a new prompt, print input and start again (temporary function).")
 
-	(.RegisterShortcut *out* "55"
-										 (fn []
-											 (.SetPromptText *out* "\\")))
+(defn init [dom]
+	"Initialize repl on a dom and set print-fn."
+	(let [repl (.jqconsole (js/jQuery dom))]
+		(set! wub repl)
+		;; Set print function.
+		(set! *print-fn* #(.Write repl % nil false))
 
-	(prompt)
-	(.Focus *out*))
+		;; Register workaround shortcut for backslashes on windows with chrome.
+		(.RegisterShortcut
+			repl "55"
+			(fn []
+				(.SetPromptText repl "\\")))
+
+		;(start-prompt repl)
+
+		(.Prompt repl "true"
+						 (fn [ds]
+							 (println "Consize returns"
+							 	(first ((VM "apply") (first ((VM "func") VM
+							 					(first (apply (VM "tokenize") ((VM "uncomment")
+							 					(reduce str (interpose " " (split ds #"\s+")))))))) () ))))
+						 (fn [ds] (nil? ds)))
+		(.Focus repl)))

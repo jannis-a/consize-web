@@ -6,4 +6,4 @@
 			(fn []
 				"Initiliaze filesystem and repl on page load."
 				(fs/init)
-				(repl/init)))
+				(repl/init "#repl")))

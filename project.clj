@@ -11,23 +11,18 @@
 								 [prismatic/dommy "0.1.1"]]
 	:plugins [[lein-cljsbuild "1.0.0-alpha2"]]
 	:cljsbuild {
-		:builds [{
-			:source-paths ["src"]
-			:compiler {
-				:output-to "resources/public/js/consize.js"
-				:optimizations :whitespace}}]}
-	;:profiles {
-	;	:dev {
-	;		:cljsbuild {
-	;			:builds [{
-	;				:compiler {
-	;					:output-to "resources/public/js/consize.js"
-	;					:optimizations :whitespace}}]}}
-	;	:production {
-	;		:cljsbuild {
-	;			:builds [{
-	;				:compiler {
-	;					:output-to "resources/public/js/consize.js"
-	;					:optimizations :advanced}}]}}}
+		:builds {
+			:deploy {
+				:source-paths ["src"]
+				:compiler {
+					:output-to "resources/public/js/consize.min.js"
+					:optimizations :advanced
+					:externs ["externs.js"]
+					:pretty-print false}}
+			:dev {
+				:source-paths ["src"]
+				:compiler {
+					:output-to "resources/public/js/consize.js"
+					:optimizations :whitespace}}}}
 	:main consize.cli
 	:min-lein-version "2.0.0")
