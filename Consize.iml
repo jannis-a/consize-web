@@ -31,6 +31,7 @@
     <orderEntry type="library" name="Leiningen: clojure-complete:0.2.3" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/clojure:1.5.1" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/clojurescript:0.0-2138" level="project" />
+    <orderEntry type="library" name="Leiningen: org.clojure/core.async:0.1.267.0-0d7780-alpha" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/tools.nrepl:0.2.3" level="project" />
     <orderEntry type="library" name="Leiningen: prismatic/dommy:0.1.1" level="project" />
     <orderEntry type="library" name="Leiningen: com.google.javascript/closure-compiler:v20131014" level="project" />
