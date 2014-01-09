@@ -1,11 +1,11 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ClojureScript REPL" type="LeiningenRunConfiguration" factoryName="Leiningen">
+  <configuration default="false" name="Auto compile CLJS (dev)" type="LeiningenRunConfiguration" factoryName="Leiningen" singleton="true">
     <LeiningenRunnerParameters>
       <option name="goals">
         <list>
-          <option value="trampoline" />
           <option value="cljsbuild" />
-          <option value="repl-rhino" />
+          <option value="auto" />
+          <option value="dev" />
         </list>
       </option>
       <option name="workingDirectory" value="$PROJECT_DIR$" />

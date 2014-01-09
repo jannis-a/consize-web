@@ -9,4 +9,5 @@ pom.xml.asc
 /.nrepl-port
 /.sass-cache
 /.idea/workspace.xml
-/resources/public/js/consize*
+/resources/public/js/out
+/resources/public/js/consize.js

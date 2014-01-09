@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Clojure REPL" type="ClojureREPL" factoryName="Local" singleton="true">
+  <configuration default="false" name="Clojure REPL" type="ClojureREPL" factoryName="Local">
     <setting name="useLein" value="false" />
     <setting name="leinProjectName" value="consize:0.1.0-SNAPSHOT" />
     <module name="Consize" />
