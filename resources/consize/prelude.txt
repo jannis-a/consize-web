@@ -388,12 +388,12 @@ SYMBOL: :else
 % UNIT-TESTING
 
 : unit-test ( result quot -- )
-   [ \ test print [ <space> print repr print ] bi@ ] 2keep
+  [ \ test print [ <space> print repr print ] bi@ ] 2keep
   [ fcall equal? ] 2keep
   rot
      [ <space> print \ passed println 2drop ]
      [ <space> print \ failed println \ with print <space> print
-      nip fcall repr println abort ]
+       nip fcall repr println abort ]
   if ;
 
 % SERIALIZATION & DUMPING

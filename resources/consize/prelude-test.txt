@@ -32,7 +32,7 @@
 ( 3 ) [ [ x y z ] size ] unit-test
 
 % if 'current-time-millis' is not supported, comment test case out
-% ( 5 ) [ [ 2 3 + ] time drop ] unit-test % tests existence of 'time'
+( 5 ) [ [ 2 3 + ] time drop ] unit-test % tests existence of 'time'
 
 ( [ ] top ) [ nil ] unit-test
 ( nil ) [ \ Xg6Frd lookup ] unit-test
