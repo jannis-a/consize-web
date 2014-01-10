@@ -24,6 +24,6 @@
 		;; Set print function.
 		(set! *print-fn* #(.Write repl % nil false))
 		;; Register workaround shortcut for backslashes on windows with chrome.
-		(.RegisterShortcut repl "55"
-											 (fn []
-												 (.SetPromptText repl "\\")))))
+		(.RegisterShortcut
+			repl "55" (fn []
+									(.SetPromptText repl (str (.GetPromptText repl) "\\"))))))
