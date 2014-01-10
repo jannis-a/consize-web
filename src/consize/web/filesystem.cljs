@@ -10,6 +10,7 @@
 (def objects
 	"List with all localStorage objects."
 	(for [file (range 0 (.-length storage))]
+		;; Need to iterate over all localStorage items.
 		(.key storage file)))
 
 (defn slurp [file]
@@ -22,7 +23,9 @@
 
 (defn open-file [file editor]
 	"Open file in editor."
+	;; Set value of file input field.
 	(dommy/set-value! (by-id "file-name") file)
+	;; Set editor to file content.
 	(.setValue editor (slurp file)))
 
 (defn add-file [file editor]
@@ -55,7 +58,8 @@
 		;; Add all localStorage objects to list.
 		(doseq [file objects]
 			(add-file file editor))
-		;; Save button.
+		;; Set click-listener for save-button.
 		(dommy/listen! (by-id "file-save") :click
+									 ;; Get name and content from editor and call spit.
 									 (fn [ev] (spit (dommy/value (by-id "file-name"))
 																	(.getValue editor))))))

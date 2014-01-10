@@ -14,11 +14,12 @@
 
 (defn operating-system []
 	"Get the operating system as string."
-	nil) ; TODO
+	;; TODO more details?
+	(.-platform js/navigator))
 
 (defn time-millis []
 	"Get the current system time in milli seconds."
-	nil) ; TODO
+	(.now js/Date))
 
 (def ^:private escape-chars
 	"Escape characters for read-string." {
@@ -38,5 +39,7 @@
 	"Workaround for broken read-string from clojurescript."
 	;; TODO handle unicode characters
 	(if (char? s)
+		;; Return value from escape chars map.
 		(escape-chars s)
+		;; Call clojurescript read-string.
 		(reader/read-string s)))

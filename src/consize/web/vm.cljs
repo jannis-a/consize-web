@@ -5,9 +5,6 @@
 																				 read-string time-millis]]
 						[consize.web.repl :refer [flush read-line]]))
 
-;(def read-line (fn [] (log ">>> read-line")))
-;(def flush (fn [] (log ">>> flush")))
-
 (defn- wordstack? [s] (and (not (empty? s)) (seq? s) (every? #(string? %) s)))
 
 (defn- binary [op]
@@ -149,11 +146,6 @@
 "call" '(("swap" "dup" "pop" "swap" "top" "rot" "concat" "continue") "call/cc"),
 "run"  '("load" "call"),
 })
-
-;(println "Consize returns"
-;	(first ((VM "apply") (first ((VM "func") VM
-;					(first (apply (VM "tokenize") ((VM "uncomment")
-;					(reduce str (interpose " " *command-line-args*))))))) () )))
 
 (defn start [args]
 	(println "Consize returns"

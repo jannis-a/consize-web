@@ -138,7 +138,7 @@
 "run"  '("load" "call"),
 })
 
-(defn init []
+(defn start []
 	(println "Consize returns"
 		(first ((VM "apply") (first ((VM "func") VM
 						(first (apply (VM "tokenize") ((VM "uncomment")

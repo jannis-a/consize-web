@@ -4,11 +4,24 @@
 				[consize.web.helpers :only [log]])
 	(:require-macros [cljs.core.async.macros :refer [go]])
 	(:require [cljs.core.async :refer [put! chan <! >! timeout]]
-						[consize.web.filesystem :as fs]; :refer [slurp spit]]
-						[consize.web.repl :as repl]; :refer [flush read-line]]
-						[consize.web.vm :refer [VM]]
+						[consize.web.filesystem :as fs]
+						[consize.web.repl :as repl]
+						[consize.web.vm :as consize]
 						[dommy.core :as dommy]))
 
+(set! (.-onload js/window)
+			(fn []
+				;; Javascript console "shortcut".
+				(aset js/window "_consize" consize.web.core/init)
+				;; Initiliaze filesystem and repl on page load.
+				(fs/init)
+				(repl/init "#repl")))
+
+(defn ^:export init [args]
+	"Split passed arguments by whitespace and start consize."
+	(consize/start (split args #"\s+")))
+
+; Test for clojure async lib.
 (let [ch (chan)]
 	(go (while true
 				(let [v (<! ch)]
@@ -16,18 +29,3 @@
 	(go (>! ch "hi")
 			(<! (timeout 5000))
 			(>! ch "there")))
-
-(set! (.-onload js/window)
-			(fn []
-				"Initiliaze filesystem and repl on page load."
-				;; Javascript console "shortcut".
-				(aset js/window "_consize" consize.web.core/init)
-				;; Initialize.
-				(fs/init)
-				(repl/init "#repl")))
-
-(defn ^:export init [args]
-	(println "Consize returns"
-		(first ((VM "apply") (first ((VM "func") VM
-						(first (apply (VM "tokenize") ((VM "uncomment")
-						(reduce str (interpose " " (split args #"\s+")))))))) () ))))
