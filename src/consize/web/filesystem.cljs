@@ -56,7 +56,6 @@
 		(doseq [file objects]
 			(add-file file editor))
 		;; Save button.
-		(dommy/listen!
-			(by-id "file-save") :click
-			(fn [ev] (spit (dommy/value (by-id "file-name"))
-										 (.getValue editor))))))
+		(dommy/listen! (by-id "file-save") :click
+									 (fn [ev] (spit (dommy/value (by-id "file-name"))
+																	(.getValue editor))))))

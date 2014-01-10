@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Auto compile CLJS" type="LeiningenRunConfiguration" factoryName="Leiningen" singleton="true">
+    <LeiningenRunnerParameters>
+      <option name="goals">
+        <list>
+          <option value="cljsbuild" />
+          <option value="auto" />
+        </list>
+      </option>
+      <option name="workingDirectory" value="$PROJECT_DIR$" />
+    </LeiningenRunnerParameters>
+    <RunnerSettings RunnerId="Run" />
+    <ConfigurationWrapper RunnerId="Run" />
+    <method />
+  </configuration>
+</component>

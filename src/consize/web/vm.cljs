@@ -1,7 +1,12 @@
 (ns consize.web.vm
-	(:use [clojure.string :only [lower-case split trim]]
-				[consize.web.filesystem :only [slurp spit]]
-				[consize.web.helpers :only [char? read-string]]))
+	(:use [clojure.string :only [lower-case split trim]])
+	(:require [consize.web.filesystem :refer [slurp spit]]
+						[consize.web.helpers :refer [char? log operating-system
+																				 read-string time-millis]]
+						[consize.web.repl :refer [flush read-line]]))
+
+;(def read-line (fn [] (log ">>> read-line")))
+;(def flush (fn [] (log ">>> flush")))
 
 (defn- wordstack? [s] (and (not (empty? s)) (seq? s) (every? #(string? %) s)))
 
@@ -52,8 +57,12 @@
 ;; Words for Words
 "word" (fn [s & r] {:pre [(wordstack? s)]} (conj r (reduce str s))),
 "unword" (fn [w & r] {:pre [w (string? w)]} (conj r (map str (seq w)))),
-"char" (fn [w & r] {:pre [(string? w) (char? (read-string w))]}
+;> Replace char word to be compatible with the read-string workaround.
+;"char" (fn [w & r] {:pre [(string? w) (char? (read-string w))]}
+;	(conj r (str (read-string w)))),
+"char" (fn [w & r] {:pre [(string? w) (char? w)]}
 	(conj r (read-string w))),
+;>
 ; "repr-word" (fn [w & r] {:pre [w (string? w)]} (conj r w)),
 
 ;; Words for I/O (console i.e. stdin/stdout)
@@ -78,8 +87,12 @@
 		(map second (re-seq #"[(\r\n)\r\n]%?>> (.*)[(\r\n)\r\n]" w)))))),
 
 ;;; OS (http://docs.oracle.com/javase/1.4.2/docs/api/java/lang/System.html)
+;> Replace words depending on the virtual machine implementations.
 ;"current-time-millis" (fn [& r] (conj r (str (System/currentTimeMillis)))),
 ;"operating-system" (fn [& r] (conj r (str (System/getProperty "os.name")))),
+"current-time-millis" (fn [& r] (conj r (str (time-millis)))),
+"operating-system" (fn [& r] (conj r (str (operating-system)))),
+;>
 
 ;; Propper stack effects are secured by 'stepcc' before and after 'callcc' etc.
 ;; If used as functions the user is responsible to obey stack effects
@@ -115,10 +128,11 @@
 					(let [[cs' ds' dict']
 						(try
 							((VM "stepcc") cs ds dict)
-							(catch :default e (list (conj cs "error") ds dict)))]
-							;; Replace java Error and Exception with javascript "catch-all".
+							;< Replace java Error and Exception with javascript "catch-all".
 							;(catch Error     e (list (conj cs "error") ds dict))
 							;(catch Exception e (list (conj cs "error") ds dict)))]
+							(catch :default e (list (conj cs "error") ds dict)))]
+							;>
 						(recur cs' ds' dict'))))]
 			(fn [& ds] (runcc qt (sequence ds) dict))))),
 
@@ -141,8 +155,8 @@
 ;					(first (apply (VM "tokenize") ((VM "uncomment")
 ;					(reduce str (interpose " " *command-line-args*))))))) () )))
 
-;(defn start [args]
-;	(println "Consize returns"
-;		(first ((VM "apply") (first ((VM "func") VM
-;						(first (apply (VM "tokenize") ((VM "uncomment")
-;						(reduce str (interpose " " (split args #"\s+")))))))) () ))))
+(defn start [args]
+	(println "Consize returns"
+		(first ((VM "apply") (first ((VM "func") VM
+						(first (apply (VM "tokenize") ((VM "uncomment")
+						(reduce str (interpose " " args))))))) () ))))
