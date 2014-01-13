@@ -10,6 +10,8 @@
       </option>
       <option name="workingDirectory" value="$PROJECT_DIR$" />
     </LeiningenRunnerParameters>
+    <RunnerSettings RunnerId="Run" />
+    <ConfigurationWrapper RunnerId="Run" />
     <method />
   </configuration>
 </component>

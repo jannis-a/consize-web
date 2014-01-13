@@ -9,7 +9,8 @@
 	:dependencies [[org.clojure/clojure "1.5.1"]
 								 [org.clojure/clojurescript "0.0-2138"]
 								 [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
-								 [prismatic/dommy "0.1.1"]]
+								 [prismatic/dommy "0.1.1"]
+								 [servant "0.1.3"]]
 	:plugins [[lein-cljsbuild "1.0.0-alpha2"]]
 	:cljsbuild {
 		:builds {
@@ -17,6 +18,8 @@
 				:source-paths ["src"]
 				:compiler {
 					:output-to "resources/public/js/consize.min.js"
+					:source-map "resources/public/js/consize.min.map"
+					:output-dir "resources/public/js/consize.min"
 					:optimizations :advanced
 					:externs ["externs.js"]
 					:pretty-print false}}
@@ -24,6 +27,8 @@
 				:source-paths ["src"]
 				:compiler {
 					:output-to "resources/public/js/consize.js"
-					:optimizations :simple}}}}
+					:source-map "resources/public/js/consize.map"
+					:output-dir "resources/public/js/consize"
+					:optimizations :whitespace}}}}
 	:main consize.cli
 	:min-lein-version "2.0.0")
