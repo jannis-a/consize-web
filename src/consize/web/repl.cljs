@@ -2,13 +2,16 @@
 	(:use-macros [dommy.macros :only [by-id, node]])
 	(:use [clojure.string :only [lower-case split trim]]
 				[consize.web.helpers :only [log operating-system time-millis]])
-	(:require-macros [cljs.core.async.macros :refer [go]])
+	(:require-macros [cljs.core.async.macros :refer [go]]
+									 [servant.macros :refer [defservantfn]])
 	(:require [cljs.core.async :refer [close! alts! put! take! chan <! >! timeout]]
 						[cljs.reader :as reader]
 						[consize.web.filesystem :refer [slurp spit]]
 						[dommy.core :as dommy]))
 
 (def *out*)
+(def *in*)
+(def *ch*)
 
 (def ^:private escape-chars
 	"Escape characters for read-string." {
@@ -28,14 +31,21 @@
 	"Override empty flush method from clojurescrip. Not sure if needed."
 	(log "> flush"))
 
-(def *in*)
-
 (defn- read-line []
 	"Start new jq-console prompt, must be modified to block consize."
 	(log "> read-line")
-	;	(.Prompt *out* "true"
-	;					 (fn [in] (>! *ch* "emptystack")))
-	"emptystack 1 push")
+	;(let [ch (chan)]
+	;	(go
+	;		(.Prompt *out* "true"
+	;						 (fn [in] (>! ch in)))
+	;		;(<! (timeout 5000))
+	;		)
+	;	(go (<! ch)))
+	(let [ch (chan)]
+		;(go (<! (go (>! *ch* "emptystack"))))
+		(go (<! (go "emptystack")))
+		)
+	)
 
 (defn- read-string [s]
 	"Workaround for broken read-string from clojurescript."
@@ -50,13 +60,16 @@
 	"Initialize repl on a dom and set print-fn."
 	;; Set variable so read-line can be called without parameters.
 	(let [repl (.jqconsole (js/jQuery "#repl"))]
-		(set! *out* repl)
+		;(log repl)
+		;(set! *out* repl)
 		;; Set print function.
 		(set! *print-fn* #(.Write repl % nil false))
+		;(set! *print-fn* #(log %))
 		;; Register workaround shortcut for backslashes on windows with chrome.
 		(.RegisterShortcut
 			repl "55" (fn []
-									 (.SetPromptText repl (str (.GetPromptText repl) "\\"))))))
+									 (.SetPromptText repl (str (.GetPromptText repl) "\\"))))
+		repl))
 
 (defn- wordstack? [s] (and (not (empty? s)) (seq? s) (every? #(string? %) s)))
 
@@ -212,8 +225,30 @@
 							(timeout 1000)
 							(inc time)))))))
 
+(defn ^:export wub [args]
+	(go
+		(>! *ch* args)))
+
+(defservantfn serv-start [args]
+							(start args))
+
 (defn start [args]
-	(println "Consize returns"
-		(first ((VM "apply") (first ((VM "func") VM
-						(first (apply (VM "tokenize") ((VM "uncomment")
-						(reduce str (interpose " " (split args #"\s+")))))))) (sequence nil) ))))
+	;(let [ch (chan)]
+		;	(set! *ch* ch)
+		;(go (while true
+		;			(run-timer 10)))
+		(set! *ch* ch)
+		;(go
+			;(while true
+			;(let [x (<! *ch*)]
+			;(<!
+				(println "Consize returns"
+					(first ((VM "apply") (first ((VM "func") VM
+									(first (apply (VM "tokenize") ((VM "uncomment")
+									(reduce str (interpose " " (split args #"\s+")))))))) (sequence nil))))
+				;)
+				;)
+				;)
+			;)
+		;)
+	)
