@@ -10,4 +10,4 @@ pom.xml.asc
 /.sass-cache
 /.idea/workspace.xml
 /resources/public/js/out
-/resources/public/js/consize*.js
+/resources/public/js/consize*

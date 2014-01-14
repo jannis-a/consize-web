@@ -1,17 +1,16 @@
 (ns consize.web.filesystem
-	(:use-macros [dommy.macros :only [by-id, node]])
-	(:use [consize.web.helpers :only [map->js]])
-	(:require [dommy.core :as dommy]))
+	(:use [dommy.core :only [append! listen! replace! set-value! value]])
+	(:use-macros [dommy.macros :only [by-id node]]))
 
 (def storage
 	"Javascript localStorage."
 	(.-localStorage js/window))
 
 (def objects
-	"List with all localStorage objects."
-	(for [file (range 0 (.-length storage))]
-		;; Need to iterate over all localStorage items.
-		(.key storage file)))
+	"List with all localStorage keys.
+	 Needs looping over all indexes of localStorage."
+	(for [i (range 0 (.-length storage))]
+		(.key storage i)))
 
 (defn slurp [file]
 	"Read from localStorage."
@@ -21,36 +20,36 @@
 	"Save to localStorage."
 	(.setItem storage file content))
 
-(defn open-file [file editor]
-	"Open file in editor."
+(defn load-file [file editor]
+	"Open file in editor, sets filename"
 	;; Set value of file input field.
-	(dommy/set-value! (by-id "file-name") file)
+	(set-value! (by-id "#file-name") file)
 	;; Set editor to file content.
 	(.setValue editor (slurp file)))
 
 (defn add-file [file editor]
-	"Append all JS localStorage objects to list."
+	" Append all JS localStorage objects to list. "
 	(let [item (node [:li file])]
 		;; Add object to list.
-		(dommy/append! (by-id "files") item)
+		(append! (by-id "#files") item)
 		;; Add click-listener to object.
-		(dommy/listen!
-			item :click
-			(fn [ev] (open-file file editor)))))
+		(listen! item :click
+									 (fn [ev] (load-file file editor)))))
 
 (defn editor []
-	"Create CodeMirror editor on dom."
+	" Create CodeMirror and replace dom with editor.
+	Sets default editor options and value. "
 	(doto
 			(js/CodeMirror.
 				;; Replace dom with editor.
-				(fn [dom] (dommy/replace! (by-id "editor") dom))
+				(fn [dom] (replace! (by-id "#editor") dom))
 				;; Default editor options.
-				(map->js {:lineNumbers      true
+				(clj->js {:lineNumbers      true
 									:matchBrackets    true
 									:lineWrapping:    true
 									:styleActiveLine: true}))
 		;; Default editor text.
-		(.setValue ";; Develop here...")))
+		(.setValue " ;; Develop here...")))
 
 (defn init []
 	"Initialize the filesystem with editor."
@@ -59,7 +58,7 @@
 		(doseq [file objects]
 			(add-file file editor))
 		;; Set click-listener for save-button.
-		(dommy/listen! (by-id "file-save") :click
+		(listen! (by-id "#file-save") :click
 									 ;; Get name and content from editor and call spit.
-									 (fn [ev] (spit (dommy/value (by-id "file-name"))
+									 (fn [ev] (spit (value (by-id "#file-name"))
 																	(.getValue editor))))))
