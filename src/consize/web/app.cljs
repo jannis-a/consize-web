@@ -1,19 +1,9 @@
 (ns consize.web.app
-	(:require [cljs.core.async :refer [<! >! chan close! put! take! timeout]]
-						[servant.core :as servant]
-						[servant.worker :as worker]
-						[consize.web.filesystem :as fs]
+	(:require [consize.web.filesystem :as fs]
 						[consize.web.repl :as repl]
-						[consize.web.core :as core])
-	(:require-macros [cljs.core.async.macros :refer [go]]
-									 [servant.macros :refer [defservantfn]]))
+						[consize.web.core :as core]))
 
-(def consize core/init)
-(def worker-count 2)
-(def worker-script "/Consize/public/js/consize.js")
-
-(defservantfn init [args]
-							consize)
+(def consize core/run)
 
 (defn ^:export bootimage [args]
 	"Run bootimage with arguments."
@@ -31,19 +21,18 @@
 	"Run prelude tests."
 	(prelude "test-prelude"))
 
-(if (servant/webworker?)
-	(worker/bootstrap) ;; Setup worker.
-	(.ready (js/jQuery js/document)
-		(fn []
-			;; Initiliaze filesystem and repl.
-			(fs/init)
-			(repl/init "#repl")
-			;; Javascript console "shortcuts".
-			(doto js/window
-				(aset "_consize" consize)
-				(aset "_bootimage" bootimage)
-				(aset "_prelude" prelude)
-				(aset "_sayhi" say-hi)
-				(aset "_test" test)))))
+(.ready
+	(js/jQuery js/document)
+	(fn []
+		;; Javascript console "shortcuts".
+		(doto js/window
+			(aset "_consize" consize)
+			(aset "_bootimage" bootimage)
+			(aset "_prelude" prelude)
+			(aset "_sayhi" say-hi)
+			(aset "_test" test))
+		;; Initiliaze filesystem and repl.
+		(fs/init)
+		(core/init "#repl")))
 
 

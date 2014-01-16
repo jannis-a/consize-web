@@ -100,11 +100,9 @@ article {
   position: relative;
   width: 100%; }
   #repl .jqconsole-cursor {
-    background: black; }
-  #repl .jqconsole-header {
-    font-weight: bold; }
+    background: rgba(0, 0, 0, 0.25); }
 
 .CodeMirror {
   height: inherit; }
   .CodeMirror .CodeMirror-activeline-background {
-    background: lightgrey; }
+    background: rgba(0, 0, 0, 0.25); }

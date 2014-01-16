@@ -1,14 +1,17 @@
 (ns consize.web.core
+	(:use-macros [dommy.macros :only [by-id]])
 	(:use [clojure.string :only [lower-case split trim]]
+				[dommy.core :only [set-text! text]]
 				[consize.web.filesystem :only [slurp spit]])
+	(:require-macros [cljs.core.async.macros :refer [go]])
 	(:require [cljs.reader :as reader]
-						[servant.core :as servant]
-						[servant.worker :as worker])
-	(:require-macros [servant.macros :refer [defservantfn]]))
+						[cljs.core.async :refer [<! chan loop timeout]]))
 
-(defn log [msg]
-	"Simple js console logger."
-	(.log js/console msg))
+(def VM)
+(def starter "\\ prelude-dump.txt run ")
+(def *ds* (chan))
+(def *out*)
+(def *repl*)
 
 (def ^:private escape-chars
 	"Escape characters for read-string." {
@@ -20,34 +23,93 @@
 	"\\space"     " ",
 })
 
+(defn log [msg]
+	"Simple js console logger."
+	(.log js/console msg))
+
+(defn toggle-state []
+	"Toggles text on a dom element showing the current state."
+	(let [dom (by-id "state")
+				state (text dom)]
+		(set-text! dom (if (= state "Idle") "Working" "Idle"))))
+
+(defn run [args]
+	"Run consize and toggle state-dom before and after."
+	(.SetPromptLabel *repl* "")
+	(go
+		(toggle-state)
+		(<! (timeout 10)) ;; Add delay of 10ms, otherwise toggle not visible.
+		(set! *out*
+			(first ((VM "apply") (first ((VM "func") VM
+							(first (apply (VM "tokenize") ((VM "uncomment")
+							(reduce str (interpose " " (split args #"\s+"))))))))
+							(sequence nil)))) ;; In go-block () seems to be not working.
+		(toggle-state)))
+
+(defn start-prompt []
+	"Starts a new prompt, on enter starts consize."
+	(.Prompt
+		*repl* "true"
+		(fn [ds] (run (if-not *out* ds (str starter ds " printer repl")))))
+	(.Focus *repl*))
+
+(defn init [dom]
+	"Initialize repl on a dom and set print-fn."
+	;; Define repl and print function.
+	(set! *repl* (.jqconsole (js/jQuery dom)))
+	(set-print-fn! #(.Write *repl* % nil false))
+	;; Register workaround shortcut for backslashes on windows with chrome.
+	(.RegisterShortcut
+		*repl* "55" (fn []
+									(.SetPromptText *repl* (str (.GetPromptText *repl*) "\\"))))
+	;; Set initial prompt label (start prompt).
+	(.SetPromptLabel *repl* "$ ")
+	;; Start prompt.
+	(start-prompt))
+
+(defn read-line []
+	"Start new jqconsole prompt. Dumps the dictionary
+	 and exits Consize so the UI gets responsive again."
+	(start-prompt)
+	"get-dict \\ state.txt dump exit")
+
+(defn- unicode? [s]
+	"Check if string is a unicode character.
+	 Returns nil, 8 (octal) or 16 (hexdecimal)"
+	(let [c (subs s 0 2)]
+		(cond (= c "\\o") 8
+					(= c "\\u") 16)))
+
 (defn- char? [s]
 	"Check if string is in escape characters map."
-	(not (nil? (escape-chars s))))
+	(or (not (nil? (escape-chars s)))
+			(unicode? s)))
 
-(defn- flush []
-	"Override empty flush method from clojurescrip. Not sure if needed."
-	(log "> flush"))
-
-(defn- read-line []
-	"Start new jq-console prompt, must be modified to block consize."
-	(log "> read-line"))
+(defn- convert-unicode [s]
+	"Converts a octal or hexadecimal character to it's symbol."
+	(.fromCharCode js/String (js/parseInt (subs s 2) (unicode? s))))
 
 (defn- read-string [s]
 	"Workaround for broken read-string from clojurescript."
-	;; TODO handle unicode characters
-	(if (char? s)
-		;; Return value from escape chars map.
-		(escape-chars s)
-		;; Call clojurescript read-string.
-		(reader/read-string s)))
+	(cond
+		;; Return unicode char.
+		(unicode? s) (convert-unicode s)
+		;; Return escape char.
+		(char? s) (escape-chars s)
+		;; No character -> read-string.
+		:else (reader/read-string s)))
 
-(defn- operating-system []
-	"Get the operating system as string."
-	;; TODO more details?
-	(.-platform js/navigator))
+(defn operating-system []
+	"Get the operating system."
+	(let [os? (fn [s] (not= (.indexOf (.-appVersion js/navigator) s) -1))]
+		(cond
+			(os? "Win") "Windows"
+			(os? "Mac") "Mac OS X"
+			(os? "X11") "UNIX"
+			(os? "Linux") "Linux")))
 
-(defn- time-millis []
-	"Get the current system time in milli seconds."
+(defn time-millis []
+	"Get the current system time in milliseconds."
 	(.now js/Date))
 
 (defn- wordstack? [s] (and (not (empty? s)) (seq? s) (every? #(string? %) s)))
@@ -101,7 +163,7 @@
 "unword" (fn [w & r] {:pre [w (string? w)]} (conj r (map str (seq w)))),
 ;> Replace char word to be compatible with the read-string workaround.
 ;"char" (fn [w & r] {:pre [(string? w) (char? (read-string w))]}
-;	(conj r (str (read-string w)))),
+;	(conj r (str (read-stringd w)))),
 "char" (fn [w & r] {:pre [(string? w) (char? w)]}
 	(conj r (read-string w))),
 ;>
@@ -163,20 +225,29 @@
 	(conj r (fn [& ds] (apply f2 (apply f1 ds))))),
 "func" (fn [dict qt & r] {:pre [(map? dict) (seq? qt)]} ; function constructor
 	(conj r
-		(let [runcc
-			(fn [cs ds dict]
-				(if (empty? cs)
-					ds
-					(let [[cs' ds' dict']
-						(try
-							((VM "stepcc") cs ds dict)
-							;< Replace java Error and Exception with javascript "catch-all".
-							;(catch Error     e (list (conj cs "error") ds dict))
-							;(catch Exception e (list (conj cs "error") ds dict)))]
-							(catch :default e (list (conj cs "error") ds dict)))]
-							;>
-						(recur cs' ds' dict'))))]
-			(fn [& ds] (runcc qt (sequence ds) dict))))),
+		(fn [& ds]
+			(go (loop [cs qt ds (sequence ds) dict dict]
+						(if (empty? cs)
+							ds
+							(let [[cs' ds' dict']
+										(try
+											((VM "stepcc") cs ds dict)
+											(catch :default e (list (conj cs "error") ds dict)))]
+								(recur cs' ds' dict')))))))),
+;"func" (fn [dict qt & r] {:pre [(map? dict) (seq? qt)]} ; function constructor
+;	(conj r
+;		(let [runcc
+;			(fn [cs ds dict]
+;				(if (empty? cs)
+;					ds
+;					(let [[cs' ds' dict']
+;						(try
+;							((VM "stepcc") cs ds dict)
+;							;(catch Error     e (list (conj cs "error") ds dict))
+;							;(catch Exception e (list (conj cs "error") ds dict)))]
+;							(catch :default e (list (conj cs "error") ds dict)))]
+;						(recur cs' ds' dict'))))]
+;			(fn [& ds] (runcc qt (sequence ds) dict))))),
 
 ;; Arithmetics
 "integer?" (fn [w & r]
@@ -191,12 +262,3 @@
 "call" '(("swap" "dup" "pop" "swap" "top" "rot" "concat" "continue") "call/cc"),
 "run"  '("load" "call"),
 })
-
-(defn init [args]
-	;; Indicates whether it's running on the main or a worker thread.
-	;(this-as self (log (if (nil? self/document) "worker" "main")))
-	(println "Consize returns"
-		(first ((VM "apply") (first ((VM "func") VM
-						(first (apply (VM "tokenize") ((VM "uncomment")
-						(reduce str (interpose " " (split args #"\s+"))))))))
-						(sequence nil)))))

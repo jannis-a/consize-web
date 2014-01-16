@@ -46,6 +46,7 @@
     <orderEntry type="library" name="Leiningen: com.google.protobuf/protobuf-java:2.4.1" level="project" />
     <orderEntry type="library" name="Leiningen: org.json/json:20090211" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/google-closure-library-third-party:0.0-20130212-95c19e7f0f5f" level="project" />
+    <orderEntry type="library" name="Leiningen: crate:0.2.3" level="project" />
     <orderEntry type="library" name="Leiningen: prismatic/cljs-test:0.0.6" level="project" />
     <orderEntry type="library" name="Leiningen: com.cemerick/clojurescript.test:0.0.4" level="project" />
   </component>

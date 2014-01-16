@@ -20,11 +20,9 @@
 				:compiler {
 					:output-to "resources/public/js/consize.min.js"
 					:optimizations :advanced
-					:externs ["externs/codemirror-3.20.js"
-										"externs/jqconsole-2.7.8.js"
-										"externs/jquery-1.9.js"]
+					:externs ["externs.js"]
 					:pretty-print false}}
-			;; Generates a huge, readable javascript file including map file.
+			;; Generates a huge, readable javascript file including sourcemap.
 			:dev {
 				:source-paths ["src"]
 				:compiler {
