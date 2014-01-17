@@ -21,18 +21,18 @@
 	"Run prelude tests."
 	(prelude "test-prelude"))
 
-(.ready
-	(js/jQuery js/document)
-	(fn []
-		;; Javascript console "shortcuts".
-		(doto js/window
-			(aset "_consize" consize)
-			(aset "_bootimage" bootimage)
-			(aset "_prelude" prelude)
-			(aset "_sayhi" say-hi)
-			(aset "_test" test))
-		;; Initiliaze filesystem and repl.
-		(fs/init)
-		(core/init "#repl")))
+(defn init []
+	;; Javascript console "shortcuts".
+	(doto js/window
+		(aset "_consize" consize)
+		(aset "_bootimage" bootimage)
+		(aset "_prelude" prelude)
+		(aset "_sayhi" say-hi)
+		(aset "_test" test))
+	;; Initiliaze filesystem and repl.
+	(fs/init)
+	(core/init "#repl"))
+
+(.ready (js/jQuery js/document) init)
 
 

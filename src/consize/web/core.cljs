@@ -9,13 +9,14 @@
 
 (def VM)
 (def starter "\\ prelude-dump.txt run ")
-; (def *ds* (chan))
-(def *out*)
-(def *repl*)
+;(def *ds* (chan))
 
-(def *dict*)
 (def *cs*)
 (def *ds*)
+(def *dict*)
+
+(def *out*)
+(def *repl*)
 
 (def ^:private escape-chars
 	"Escape characters for read-string." {
@@ -44,35 +45,31 @@
 		(toggle-state)
 		(<! (timeout 10)) ;; Add delay of 10ms, otherwise toggle not visible.
 		(set! *out*
-			(first ((VM "apply") (first ((VM "func") VM
-							(first (apply (VM "tokenize") ((VM "uncomment")
-							(reduce str (interpose " " (split args #"\s+"))))))))
-							(sequence nil)))) ;; In go-block () seems to be not working.
+					(first ((VM "apply") (first ((VM "func") VM
+									(first (apply (VM "tokenize") ((VM "uncomment")
+									(reduce str (interpose " " (split args #"\s+"))))))))
+									(sequence nil)))) ;; In go-block () seems to be not working.
 		(toggle-state)))
 
-(defn run2 [ds]
+(defn run2 [args]
 	"Run consize and toggle state-dom before and after."
 	(.SetPromptLabel *repl* "")
 	(go
 		(toggle-state)
-		(<! (timeout 10)) ;; Add delay of 10ms, otherwise toggle not visible.
-		(set! *out*
-					(first ((VM "apply") (first ((VM "func") *dict*
-					(first (apply (VM "tokenize") ((VM "uncomment")
-					(reduce str (interpose " " (split (conj *cs* "printer" "repl")  #"\s+"))))))))
-									(conj *ds* ds)))) ;; In go-block () seems to be not working.
+		(<! (timeout 10)) ;; Add- delay of 10ms, otherwise toggle not visible.
+		(let [*cs* (concat (split args #"\s+") (conj *cs* "repl" "printer"))]
+			(set! *out* (first ((VM "apply") (first ((VM "func") *dict* *cs*)) *ds*))))
 		(toggle-state)))
 
 (defn start-prompt []
 	"Starts a new prompt, on enter starts consize."
 	(.Prompt
 		*repl* "true"
-		(fn [ds]
-			(if *out*
-				(run2 ds)
-				(run ds)
-			)
-			; (run (if-not *out* ds (str starter ds " printer repl")))
+		(fn [in]
+			(if *dict*
+				(run2 in)
+				(run in))
+			;(run (if-not *out* in (str starter in " printer repl")))
 			))
 	(.Focus *repl*))
 
@@ -88,13 +85,14 @@
 	;; Set initial prompt label (start prompt).
 	(.SetPromptLabel *repl* "$ ")
 	;; Start prompt.
-	(start-prompt))
+	(start-prompt)
+	(.SetPromptText *repl* "\\ prelude-dump.txt run say-hi"))
 
 (defn read-line []
 	"Start new jqconsole prompt. Dumps the dictionary
 	 and exits Consize so the UI gets responsive again."
 	(start-prompt)
-	(log (str *ds*))
+	;"get-dict \\ state.txt dump exit"
 	"exit")
 
 (defn- unicode? [s]
@@ -247,34 +245,39 @@
 "apply" (fn [f s & r] {:pre [(fn? f) (seq? s)]} (conj r (apply f s))),
 "compose" (fn [f2 f1 & r] {:pre [(fn? f1) (fn? f2)]}
 	(conj r (fn [& ds] (apply f2 (apply f1 ds))))),
-"func" (fn [dict qt & r] {:pre [(map? dict) (seq? qt)]} ; function constructor
-	(conj r
-		(fn [& ds]
-			(go (loop [cs qt ds (sequence ds) dict dict]
-						(if (empty? cs)
-							ds
-							(let [[cs' ds' dict']
-										(try
-											((VM "stepcc") cs ds dict)
-											(catch :default e (list (conj cs "error") ds dict)))]
-								(set! *dict* dict')
-								(set! *cs* cs')
-								(set! *ds* ds')
-								(recur cs' ds' dict')))))))),
 ;"func" (fn [dict qt & r] {:pre [(map? dict) (seq? qt)]} ; function constructor
 ;	(conj r
-;		(let [runcc
-;			(fn [cs ds dict]
-;				(if (empty? cs)
-;					ds
-;					(let [[cs' ds' dict']
-;						(try
-;							((VM "stepcc") cs ds dict)
-;							;(catch Error     e (list (conj cs "error") ds dict))
-;							;(catch Exception e (list (conj cs "error") ds dict)))]
-;							(catch :default e (list (conj cs "error") ds dict)))]
-;						(recur cs' ds' dict'))))]
-;			(fn [& ds] (runcc qt (sequence ds) dict))))),
+;		(fn [& ds]
+;			(go (loop [cs qt
+;								 ds (sequence ds)
+;								 dict dict]
+;						(if (empty? cs)
+;							ds
+;							(let [[cs' ds' dict']
+;										(try
+;											((VM "stepcc") cs ds dict)
+;											(catch :default e (list (conj cs "error") ds dict)))]
+;								(set! *cs* cs')
+;								(set! *ds* ds')
+;								(set! *dict* dict')
+;								(recur cs' ds' dict')))))))),
+"func" (fn [dict qt & r] {:pre [(map? dict) (seq? qt)]} ; function constructor
+	(conj r
+		(let [runcc
+			(fn [cs ds dict]
+				(if (empty? cs)
+					ds
+					(let [[cs' ds' dict']
+						(try
+							((VM "stepcc") cs ds dict)
+							;(catch Error     e (list (conj cs "error") ds dict))
+							;(catch Exception e (list (conj cs "error") ds dict)))]
+							(catch :default e (list (conj cs "error") ds dict)))]
+						(set! *cs* cs')
+						(set! *ds* ds')
+						(set! *dict* dict')
+						(recur cs' ds' dict'))))]
+			(fn [& ds] (runcc qt (sequence ds) dict))))),
 
 ;; Arithmetics
 "integer?" (fn [w & r]
