@@ -9,9 +9,13 @@
 
 (def VM)
 (def starter "\\ prelude-dump.txt run ")
-(def *ds* (chan))
+; (def *ds* (chan))
 (def *out*)
 (def *repl*)
+
+(def *dict*)
+(def *cs*)
+(def *ds*)
 
 (def ^:private escape-chars
 	"Escape characters for read-string." {
@@ -46,11 +50,30 @@
 							(sequence nil)))) ;; In go-block () seems to be not working.
 		(toggle-state)))
 
+(defn run2 [ds]
+	"Run consize and toggle state-dom before and after."
+	(.SetPromptLabel *repl* "")
+	(go
+		(toggle-state)
+		(<! (timeout 10)) ;; Add delay of 10ms, otherwise toggle not visible.
+		(set! *out*
+					(first ((VM "apply") (first ((VM "func") *dict*
+					(first (apply (VM "tokenize") ((VM "uncomment")
+					(reduce str (interpose " " (split (conj *cs* "printer" "repl")  #"\s+"))))))))
+									(conj *ds* ds)))) ;; In go-block () seems to be not working.
+		(toggle-state)))
+
 (defn start-prompt []
 	"Starts a new prompt, on enter starts consize."
 	(.Prompt
 		*repl* "true"
-		(fn [ds] (run (if-not *out* ds (str starter ds " printer repl")))))
+		(fn [ds]
+			(if *out*
+				(run2 ds)
+				(run ds)
+			)
+			; (run (if-not *out* ds (str starter ds " printer repl")))
+			))
 	(.Focus *repl*))
 
 (defn init [dom]
@@ -71,7 +94,8 @@
 	"Start new jqconsole prompt. Dumps the dictionary
 	 and exits Consize so the UI gets responsive again."
 	(start-prompt)
-	"get-dict \\ state.txt dump exit")
+	(log (str *ds*))
+	"exit")
 
 (defn- unicode? [s]
 	"Check if string is a unicode character.
@@ -233,6 +257,9 @@
 										(try
 											((VM "stepcc") cs ds dict)
 											(catch :default e (list (conj cs "error") ds dict)))]
+								(set! *dict* dict')
+								(set! *cs* cs')
+								(set! *ds* ds')
 								(recur cs' ds' dict')))))))),
 ;"func" (fn [dict qt & r] {:pre [(map? dict) (seq? qt)]} ; function constructor
 ;	(conj r
