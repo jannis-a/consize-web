@@ -31,7 +31,7 @@
 		(aset "_test" test))
 	;; Initiliaze filesystem and repl.
 	(fs/init)
-	(core/init "#repl"))
+	(core/init))
 
 (.ready (js/jQuery js/document) init)
 

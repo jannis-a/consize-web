@@ -9,5 +9,6 @@ pom.xml.asc
 /.nrepl-port
 /.sass-cache
 /.idea/workspace.xml
-/resources/public/js/out
 /resources/public/js/consize*
+/prelude*.txt
+/bootimage.txt

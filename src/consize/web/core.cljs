@@ -7,19 +7,21 @@
 	(:require [cljs.reader :as reader]
 						[cljs.core.async :refer [<! chan loop timeout]]))
 
+;; Prevent warning on compile.
 (def VM)
-(def starter "\\ prelude-dump.txt run ")
-;(def *ds* (chan))
-
+;; Replace Java Error and Exception with JavaScript Error.
+(def Error js/Error)
+(def Exception Error)
+;; Consize stacks, used for fast continuation instead of using Consize words.
 (def *cs*)
 (def *ds*)
 (def *dict*)
-
-(def *out*)
+;; Current repl, needed for calling read-line without parameters.
 (def *repl*)
 
-(def ^:private escape-chars
-	"Escape characters for read-string." {
+(def escape-chars
+	^{:doc     "Escape characters for read-string."
+		:private true} {
 	"\\backspace" "\b",
 	"\\formfeed"  "\f"
 	"\\newline"   "\n"
@@ -28,109 +30,83 @@
 	"\\space"     " ",
 })
 
-(defn log [msg]
-	"Simple js console logger."
-	(.log js/console msg))
-
 (defn toggle-state []
 	"Toggles text on a dom element showing the current state."
-	(let [dom (by-id "state")
-				state (text dom)]
-		(set-text! dom (if (= state "Idle") "Working" "Idle"))))
+	(let [dom (by-id "#state")]
+		(set-text! dom (if (= (text dom) "Idle") "Working" "Idle"))))
+
+(defn- start [args]
+	"Transform arguments to initially run consize"
+	(first (apply (VM "tokenize") ((VM "uncomment")
+	(reduce str (interpose " " args))))))
+
+(defn- continue [args]
+	"Join callstack with 'printer' and 'repl', then concat with arguments."
+	(concat args (conj *cs* "repl" "printer")))
 
 (defn run [args]
-	"Run consize and toggle state-dom before and after."
-	(.SetPromptLabel *repl* "")
-	(go
-		(toggle-state)
-		(<! (timeout 10)) ;; Add delay of 10ms, otherwise toggle not visible.
-		(set! *out*
-					(first ((VM "apply") (first ((VM "func") VM
-									(first (apply (VM "tokenize") ((VM "uncomment")
-									(reduce str (interpose " " (split args #"\s+"))))))))
-									(sequence nil)))) ;; In go-block () seems to be not working.
-		(toggle-state)))
+	"Run Consize. If stacks are not set, do initially run else do continuation."
+	(let [args (split args #"\s+")
+				dict (if *dict* *dict* VM)
+				cs (if *cs* (continue args) (start args))
+				ds (if *ds* *ds* ())]
+		(first ((VM "apply") (first ((VM "func") dict cs)) ds))))
 
-(defn run2 [args]
-	"Run consize and toggle state-dom before and after."
-	(.SetPromptLabel *repl* "")
-	(go
-		(toggle-state)
-		(<! (timeout 10)) ;; Add- delay of 10ms, otherwise toggle not visible.
-		(let [*cs* (concat (split args #"\s+") (conj *cs* "repl" "printer"))]
-			(set! *out* (first ((VM "apply") (first ((VM "func") *dict* *cs*)) *ds*))))
-		(toggle-state)))
-
-(defn start-prompt []
-	"Starts a new prompt, on enter starts consize."
-	(.Prompt
-		*repl* "true"
-		(fn [in]
-			(if *dict*
-				(run2 in)
-				(run in))
-			;(run (if-not *out* in (str starter in " printer repl")))
-			))
-	(.Focus *repl*))
-
-(defn init [dom]
+(defn init []
 	"Initialize repl on a dom and set print-fn."
-	;; Define repl and print function.
-	(set! *repl* (.jqconsole (js/jQuery dom)))
+	(set! *repl* (.jqconsole (js/jQuery "#repl")))
 	(set-print-fn! #(.Write *repl* % nil false))
-	;; Register workaround shortcut for backslashes on windows with chrome.
-	(.RegisterShortcut
-		*repl* "55" (fn []
-									(.SetPromptText *repl* (str (.GetPromptText *repl*) "\\"))))
-	;; Set initial prompt label (start prompt).
-	(.SetPromptLabel *repl* "$ ")
-	;; Start prompt.
-	(start-prompt)
-	(.SetPromptText *repl* "\\ prelude-dump.txt run say-hi"))
+	;; Configure repl.
+	(.SetPromptLabel *repl* "")
+	(.RegisterShortcut *repl* "55" (fn []
+		(.SetPromptText *repl* (str (.GetPromptText *repl*) "\\"))))
+	;; Start Consize.
+	(run "\\ prelude-dump.txt run say-hi"))
 
 (defn read-line []
-	"Start new jqconsole prompt. Dumps the dictionary
-	 and exits Consize so the UI gets responsive again."
-	(start-prompt)
-	;"get-dict \\ state.txt dump exit"
+	"Start new jqconsole prompt. Exits Consize so the UI gets responsive again."
+	(.Prompt *repl* "true" (fn [args]
+		;; Without delay (timeout) toggle not visible, need go-block for this.
+		(go (toggle-state)
+				(<! (timeout 10))
+				(run args)
+				(toggle-state))))
+	(.Focus *repl*)
 	"exit")
 
-(defn- unicode? [s]
-	"Check if string is a unicode character.
-	 Returns nil, 8 (octal) or 16 (hexdecimal)"
+(defn unicode? [s]
+	"Check if string is a unicode character. Returns nil, 8 (oct) or 16 (hex)"
 	(let [c (subs s 0 2)]
 		(cond (= c "\\o") 8
 					(= c "\\u") 16)))
 
-(defn- char? [s]
-	"Check if string is in escape characters map."
-	(or (not (nil? (escape-chars s)))
-			(unicode? s)))
+(defn char? [s]
+	"Check if string is a single character or escape character."
+	(let [len (.-length s)]
+		(or (= len 1)
+				(and (= len 2)
+						 (= (subs s 0 1) "\\")))))
 
-(defn- convert-unicode [s]
+(defn convert-unicode [s]
 	"Converts a octal or hexadecimal character to it's symbol."
 	(.fromCharCode js/String (js/parseInt (subs s 2) (unicode? s))))
 
-(defn- read-string [s]
+(defn read-string [s]
 	"Workaround for broken read-string from clojurescript."
-	(cond
-		;; Return unicode char.
-		(unicode? s) (convert-unicode s)
-		;; Return escape char.
-		(char? s) (escape-chars s)
-		;; No character -> read-string.
-		:else (reader/read-string s)))
+	(let [escape (escape-chars s)]
+		(cond (not-empty escape) escape
+					(unicode? s) (convert-unicode s)
+					:else (reader/read-string s))))
 
 (defn operating-system []
 	"Get the operating system."
 	(let [os? (fn [s] (not= (.indexOf (.-appVersion js/navigator) s) -1))]
-		(cond
-			(os? "Win") "Windows"
-			(os? "Mac") "Mac OS X"
-			(os? "X11") "UNIX"
-			(os? "Linux") "Linux")))
+		(cond (os? "Win") "Windows"
+					(os? "Mac") "Mac OS X"
+					(os? "X11") "UNIX"
+					(os? "Linux") "Linux")))
 
-(defn time-millis []
+(defn current-time-millis []
 	"Get the current system time in milliseconds."
 	(.now js/Date))
 
@@ -183,12 +159,8 @@
 ;; Words for Words
 "word" (fn [s & r] {:pre [(wordstack? s)]} (conj r (reduce str s))),
 "unword" (fn [w & r] {:pre [w (string? w)]} (conj r (map str (seq w)))),
-;> Replace char word to be compatible with the read-string workaround.
-;"char" (fn [w & r] {:pre [(string? w) (char? (read-string w))]}
-;	(conj r (str (read-stringd w)))),
-"char" (fn [w & r] {:pre [(string? w) (char? w)]}
-	(conj r (read-string w))),
-;>
+"char" (fn [w & r] {:pre [(string? w) (char? (read-string w))]}
+	(conj r (str (read-string w)))),
 ; "repr-word" (fn [w & r] {:pre [w (string? w)]} (conj r w)),
 
 ;; Words for I/O (console i.e. stdin/stdout)
@@ -216,8 +188,8 @@
 ;> Replace words depending on the virtual machine implementations.
 ;"current-time-millis" (fn [& r] (conj r (str (System/currentTimeMillis)))),
 ;"operating-system" (fn [& r] (conj r (str (System/getProperty "os.name")))),
-"current-time-millis" (fn [& r] (conj r (str (time-millis)))),
-"operating-system"    (fn [& r] (conj r (str (operating-system)))),
+"current-time-millis" (fn [& r] (conj r (str (current-time-millis)))),
+"operating-system" (fn [& r] (conj r (str (operating-system)))),
 ;>
 
 ;; Propper stack effects are secured by 'stepcc' before and after 'callcc' etc.
@@ -245,22 +217,6 @@
 "apply" (fn [f s & r] {:pre [(fn? f) (seq? s)]} (conj r (apply f s))),
 "compose" (fn [f2 f1 & r] {:pre [(fn? f1) (fn? f2)]}
 	(conj r (fn [& ds] (apply f2 (apply f1 ds))))),
-;"func" (fn [dict qt & r] {:pre [(map? dict) (seq? qt)]} ; function constructor
-;	(conj r
-;		(fn [& ds]
-;			(go (loop [cs qt
-;								 ds (sequence ds)
-;								 dict dict]
-;						(if (empty? cs)
-;							ds
-;							(let [[cs' ds' dict']
-;										(try
-;											((VM "stepcc") cs ds dict)
-;											(catch :default e (list (conj cs "error") ds dict)))]
-;								(set! *cs* cs')
-;								(set! *ds* ds')
-;								(set! *dict* dict')
-;								(recur cs' ds' dict')))))))),
 "func" (fn [dict qt & r] {:pre [(map? dict) (seq? qt)]} ; function constructor
 	(conj r
 		(let [runcc
@@ -270,12 +226,13 @@
 					(let [[cs' ds' dict']
 						(try
 							((VM "stepcc") cs ds dict)
-							;(catch Error     e (list (conj cs "error") ds dict))
-							;(catch Exception e (list (conj cs "error") ds dict)))]
-							(catch :default e (list (conj cs "error") ds dict)))]
+							(catch Error     e (list (conj cs "error") ds dict))
+							(catch Exception e (list (conj cs "error") ds dict)))]
+						;> Set the current stacks to vars to easily continue execution.
 						(set! *cs* cs')
 						(set! *ds* ds')
 						(set! *dict* dict')
+						;>
 						(recur cs' ds' dict'))))]
 			(fn [& ds] (runcc qt (sequence ds) dict))))),
 

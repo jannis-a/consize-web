@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Auto compile CLJS (deploy)" type="LeiningenRunConfiguration" factoryName="Leiningen" singleton="true">
+  <configuration default="false" name="Auto compile CLJS (deploy)" type="LeiningenRunConfiguration" factoryName="Leiningen">
     <LeiningenRunnerParameters>
       <option name="goals">
         <list>
