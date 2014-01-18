@@ -16,6 +16,8 @@
 (def *cs*)
 (def *ds*)
 (def *dict*)
+;; If true, write current stacks to above vars.
+(def *halt* false)
 ;; Current repl, needed for calling read-line without parameters.
 (def *repl*)
 
@@ -46,6 +48,7 @@
 
 (defn run [args]
 	"Run Consize. If stacks are not set, do initially run else do continuation."
+	(set! *halt* false)
 	(let [args (split args #"\s+")
 				dict (if *dict* *dict* VM)
 				cs (if *cs* (continue args) (start args))
@@ -65,6 +68,7 @@
 
 (defn read-line []
 	"Start new jqconsole prompt. Exits Consize so the UI gets responsive again."
+	(set! *halt* true)
 	(.Prompt *repl* "true" (fn [args]
 		;; Without delay (timeout) toggle not visible, need go-block for this.
 		(go (toggle-state)
@@ -229,9 +233,10 @@
 							(catch Error     e (list (conj cs "error") ds dict))
 							(catch Exception e (list (conj cs "error") ds dict)))]
 						;> Set the current stacks to vars to easily continue execution.
-						(set! *cs* cs')
-						(set! *ds* ds')
-						(set! *dict* dict')
+						(when (true? *halt*)
+							(set! *cs* cs')
+							(set! *ds* ds')
+							(set! *dict* dict'))
 						;>
 						(recur cs' ds' dict'))))]
 			(fn [& ds] (runcc qt (sequence ds) dict))))),
