@@ -11,6 +11,7 @@ pom.xml.asc
 /.sass-cache
 /.idea/replstate.xml
 /.idea/workspace.xml
-/resources/public/js/consize*
+/resources/public/js/consize/
+/resources/public/js/consize.js
 /prelude*.txt
 /bootimage.txt
