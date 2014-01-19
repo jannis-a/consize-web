@@ -7,8 +7,6 @@
 	(:require [cljs.reader :as reader]
 						[cljs.core.async :refer [<! chan loop timeout]]))
 
-;; Prevent warning on compile.
-(def VM)
 ;; Replace Java Error and Exception with JavaScript Error.
 (def Error js/Error)
 (def Exception Error)
@@ -17,7 +15,7 @@
 (def *ds*)
 (def *dict*)
 ;; If true, write current stacks to above vars.
-(def *halt* false)
+(def *resume* false)
 ;; Current repl, needed for calling read-line without parameters.
 (def *repl*)
 
@@ -48,7 +46,7 @@
 
 (defn run [args]
 	"Run Consize. If stacks are not set, do initially run else do continuation."
-	(set! *halt* false)
+	(set! *resume* false)
 	(let [args (split args #"\s+")
 				dict (if *dict* *dict* VM)
 				cs (if *cs* (continue args) (start args))
@@ -59,19 +57,21 @@
 	"Initialize repl on a dom and set print-fn."
 	(set! *repl* (.jqconsole (js/jQuery "#repl")))
 	(set-print-fn! #(.Write *repl* % nil false))
-	;; Configure repl.
-	(.SetPromptLabel *repl* "")
-	(when (not= (.indexOf (lower-case (.-userAgent js/navigator)) "chrome") -1)
+	;; Workaround shortcuts for windows + chrome
+	(when
+			(and (not= (.indexOf (lower-case (.-userAgent js/navigator)) "chrome") -1)
+					 (= (operating-system) "Windows"))
+		(show! (by-id "#shortcuts")
 		(doseq [[code, char] {"54" "\\", "55" "{", "56" "[", "57" "]", "48" "}"}]
 			(.RegisterShortcut *repl* code (fn []
-				(.SetPromptText *repl* (str (.GetPromptText *repl*) char)))))
-		(show! (by-id "#shortcuts")))
+				(.SetPromptText *repl* (str (.GetPromptText *repl*) char)))))))
 	;; Start Consize.
+	(.SetPromptLabel *repl* "")
 	(run "\\ prelude-dump.txt run say-hi"))
 
 (defn read-line []
 	"Start new jqconsole prompt. Exits Consize so the UI gets responsive again."
-	(set! *halt* true)
+	(set! *resume* true)
 	(.Prompt *repl* "true" (fn [args]
 		;; Without delay (timeout) toggle not visible, need go-block for this.
 		(go (toggle-state)
@@ -236,7 +236,7 @@
 							(catch Error     e (list (conj cs "error") ds dict))
 							(catch Exception e (list (conj cs "error") ds dict)))]
 						;> Set the current stacks to vars to easily continue execution.
-						(when (true? *halt*)
+						(when (true? *resume*)
 							(set! *cs* cs')
 							(set! *ds* ds')
 							(set! *dict* dict'))

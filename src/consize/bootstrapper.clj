@@ -16,7 +16,7 @@
 			(.write out (str "\t(spit \"" file "\" \""))
 			(with-open [rdr (io/reader (str path file))]
 				(doseq [line (line-seq rdr)]
-					(.write out (str (string/replace (string/replace line #"\"" "'") #"\\"
-																		 #(str %1 %1)) "\n"))))
+					(.write out (str (string/replace (string/replace line #"\"" "'")
+																					 #"\\" #(str %1 %1)) "\n"))))
 			(.write out "\")\n\n"))
 		(.write out ")\n")))

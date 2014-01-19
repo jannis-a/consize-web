@@ -8,7 +8,8 @@
   <component name="FacetManager">
     <facet type="bash" name="BashSupport">
       <configuration>
-        <operationMode type="AcceptAll" />
+        <operationMode type="Custom" />
+        <file url="file://$MODULE_DIR$/resources/codemirror/bin" mode="accept" />
       </configuration>
     </facet>
     <facet type="Clojure" name="Clojure">

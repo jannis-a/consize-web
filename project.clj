@@ -2,6 +2,7 @@
 	:description "A project containing Consize as CLI and Web App"
 	:author ["Consize: Dominikus Herzberg, Heilbronn University"
 					 "Web App: Jannis Assenheimer, Heilbronn University"
+					 "Web App: Jan Gueth, Heilbronn University"
 					 "Web App: Christian Coward, Heilbronn University"]
 	:license {:name "New BSD Licence"
 						:url "http://opensource.org/licenses/BSD-3-Clause"
