@@ -11,7 +11,9 @@ to run the bootimage with a custom command for example. But due the lack of time
 There are also some todos. To make the workaround of exiting Consize on each 
 **read-line** obsolete, core.async should be implemented. Maybe the 
 ClojureScript **servant** library should be implemented which gives us real 
-threads.
+threads. This project should use ClojureScript crossovers in future. This would 
+reduce the lines of code heavily and makes maintaining easier as only one file
+has to be updated if there are changes in the Consize Clojure file.
 
 ## How to compile and use
 To compile this project leiningen is required.
