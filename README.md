@@ -46,15 +46,16 @@ directory which makes the output really huge.
 
 ### Update bootstrapping
 If one of the .txt files in **resources/consize** gets updated, execute the 
-following command **before** compiling ClojureScript:  
+following command **before** compiling ClojureScript (needs only one execution 
+if files in **resources/consize** are updated):  
 `lein bootstrapper`
 
 ### Using the web app
 After compiling the files, just open the **resources/public/index.html** in your
  prefered browser. We recommend Chrome - it's 4x faster than Firefox. Chrome on 
 Windows has a bug with jq-console, writing **\\**, **{**, **}**, **[**, **]** is 
-not possible. To solve this we implemented shortcuts, they're displayed on the 
-page.  
+not possible. To solve this problem we implemented shortcuts, they're displayed 
+on the page.    
 
 If you load the page the script will save **bootimage.txt**, **prelude.txt**, 
 **prelude-dump.txt** and **prelude-test.txt** automatically in JavaScript 
@@ -83,10 +84,15 @@ The web app uses **prelude-dump.txt** to run Consize to improve start time.
 ### JavaScript
 * [jQuery](https://github.com/jquery/jquery)
 * [jq-console](https://github.com/replit/jq-console)
-* [CodeMirror](https://github.com/marijnh/codemirror)
+* [CodeMirror](https://github.com/marijnh/codemirror)  
+
+jq-console and CodeMirror are added as submodules to this repo, but the needed 
+files were copied to the **resources/public/js** directory. jQuery, with 
+migrate plugin (needed to be compatible with jq-console) and the sourcemap are
+also included as copy.
 
 ### Other
-* [Compass](https://github.com/chriseppstein/compass)
+* [Compass](https://github.com/chriseppstein/compass) (CSS compiler)
 
 ## Copyright
 * Consize: Dominikus Herzberg (2012, Heilbronn University)
