@@ -1,7 +1,7 @@
 (ns consize.web.core
 	(:use-macros [dommy.macros :only [by-id]])
 	(:use [clojure.string :only [lower-case split trim]]
-				[dommy.core :only [set-text! text]]
+				[dommy.core :only [set-text! show! text]]
 				[consize.web.filesystem :only [slurp spit]])
 	(:require-macros [cljs.core.async.macros :refer [go]])
 	(:require [cljs.reader :as reader]
@@ -61,8 +61,11 @@
 	(set-print-fn! #(.Write *repl* % nil false))
 	;; Configure repl.
 	(.SetPromptLabel *repl* "")
-	(.RegisterShortcut *repl* "55" (fn []
-		(.SetPromptText *repl* (str (.GetPromptText *repl*) "\\"))))
+	(when (not= (.indexOf (lower-case (.-userAgent js/navigator)) "chrome") -1)
+		(doseq [[code, char] {"54" "\\", "55" "{", "56" "[", "57" "]", "48" "}"}]
+			(.RegisterShortcut *repl* code (fn []
+				(.SetPromptText *repl* (str (.GetPromptText *repl*) char)))))
+		(show! (by-id "#shortcuts")))
 	;; Start Consize.
 	(run "\\ prelude-dump.txt run say-hi"))
 

@@ -1,5 +1,6 @@
 (ns consize.web.app
-	(:require [consize.web.filesystem :as fs]
+	(:require	[consize.web.bootstrap :as bootstrap]
+						[consize.web.filesystem :as fs]
 						[consize.web.repl :as repl]
 						[consize.web.core :as core]))
 
@@ -22,12 +23,14 @@
 	(prelude "test-prelude"))
 
 (defn init []
+	;; Bootstrap needed files
+	(bootstrap/init)
 	;; Javascript console "shortcuts".
 	(doto js/window
 		(aset "_consize" consize)
 		(aset "_bootimage" bootimage)
 		(aset "_prelude" prelude)
-		(aset "_sayhi" say-hi)
+		;(aset "_sayhi" say-hi)
 		(aset "_test" test))
 	;; Initiliaze filesystem and repl.
 	(fs/init)

@@ -1,6 +1,7 @@
 (ns consize.web.filesystem
 	(:use-macros [dommy.macros :only [by-id node]])
-	(:use [dommy.core :only [append! descendant? listen! replace! set-value! value]]))
+	(:use [dommy.core :only [append! descendant? listen!
+													 replace! set-value! value]]))
 
 ;; Set the current editor.
 (def *editor*)
@@ -60,7 +61,11 @@
 	(set! *editor* (editor))
 	;; Add all localStorage objects to list.
 	(doseq [file objects]
-		(add-file file))
+		(when-not (or (= file "bootimage.txt")
+									(or (= file "prelude.txt")
+											(or (= file "prelude-dump.txt")
+													(= file "prelude-test.txt"))))
+			(add-file file)))
 	;; Set click-listener for save-button.
 	(listen! (by-id "#file-save") :click
 		(fn [ev] (spit (value (by-id "#file-name"))
