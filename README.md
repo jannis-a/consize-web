@@ -46,8 +46,7 @@ directory which makes the output really huge.
 
 ### Update bootstrapping
 If one of the .txt files in **resources/consize** gets updated, execute the 
-following command **before** compiling ClojureScript (needs only one execution 
-if files in **resources/consize** are updated):  
+following command **before** compiling ClojureScript (once per update):  
 `lein bootstrapper`
 
 ### Using the web app

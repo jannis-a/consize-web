@@ -7,6 +7,8 @@
 	(:require [cljs.reader :as reader]
 						[cljs.core.async :refer [<! chan loop timeout]]))
 
+;; Prevent warning on compile.
+(def VM)
 ;; Replace Java Error and Exception with JavaScript Error.
 (def Error js/Error)
 (def Exception Error)
@@ -34,6 +36,18 @@
 	"Toggles text on a dom element showing the current state."
 	(let [dom (by-id "#state")]
 		(set-text! dom (if (= (text dom) "Idle") "Working" "Idle"))))
+
+(defn operating-system []
+	"Get the operating system."
+	(let [os? (fn [s] (not= (.indexOf (.-appVersion js/navigator) s) -1))]
+		(cond (os? "Win") "Windows"
+					(os? "Mac") "Mac OS X"
+					(os? "X11") "UNIX"
+					(os? "Linux") "Linux")))
+
+(defn current-time-millis []
+	"Get the current system time in milliseconds."
+	(.now js/Date))
 
 (defn- start [args]
 	"Transform arguments to initially run consize"
@@ -104,18 +118,6 @@
 		(cond (not-empty escape) escape
 					(unicode? s) (convert-unicode s)
 					:else (reader/read-string s))))
-
-(defn operating-system []
-	"Get the operating system."
-	(let [os? (fn [s] (not= (.indexOf (.-appVersion js/navigator) s) -1))]
-		(cond (os? "Win") "Windows"
-					(os? "Mac") "Mac OS X"
-					(os? "X11") "UNIX"
-					(os? "Linux") "Linux")))
-
-(defn current-time-millis []
-	"Get the current system time in milliseconds."
-	(.now js/Date))
 
 (defn- wordstack? [s] (and (not (empty? s)) (seq? s) (every? #(string? %) s)))
 
