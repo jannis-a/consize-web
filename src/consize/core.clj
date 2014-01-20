@@ -7,6 +7,12 @@
   consize.core
   (:use [clojure.string :only (lower-case split trim)]))
 
+;; Adding dynamic vars to bind platform specific functions.
+(doseq [var [char? read-string read-line slurp spit]]
+	(def ^:dynamic var))
+(def ^:dynamic current-time-millis)
+(def ^:dynamic operating-system)
+
 (defn- wordstack? [s] (and (not (empty? s)) (seq? s) (every? #(string? %) s)))
 
 (defn- binary [op]
@@ -16,7 +22,7 @@
 	(fn [y x & r] {:pre [(integer? (read-string x)) (integer? (read-string y))]}
 		(conj r (if (op (read-string x) (read-string y)) "t" "f"))))
 
-(def VM {
+(def ^:dynamic VM {
 ;; Words for stack shuffling
 "swap" (fn [y x & r] (conj r y x)),
 "dup"  (fn [x & r] (conj r x x)),
@@ -81,9 +87,9 @@
 	(conj r (reduce str (interpose "\r\n"
     (map second (re-seq #"[(\r\n)\r\n]%?>> (.*)[(\r\n)\r\n]" w)))))),
 
-;; OS (http://docs.oracle.com/javase/1.4.2/docs/api/java/lang/System.html)
-"current-time-millis" (fn [& r] (conj r (str (System/currentTimeMillis)))),
-"operating-system" (fn [& r] (conj r (str (System/getProperty "os.name")))),
+;; Replaced functions with dynamic vars.
+"current-time-millis" (fn [& r] (conj r (str current-time-millis))),
+"operating-system" (fn [& r] (conj r (str operating-system))),
 
 ;; Propper stack effects are secured by 'stepcc' before and after 'callcc' etc.
 ;; If used as functions the user is responsible to obey stack effects
@@ -138,9 +144,18 @@
 "run"  '("load" "call"),
 })
 
-(defn start []
-	(println "Consize returns"
-		(first ((VM "apply") (first ((VM "func") VM
-						(first (apply (VM "tokenize") ((VM "uncomment")
-						(reduce str (interpose " " *command-line-args*))))))) () )))
-)
+(defn returns [out]
+	"Print the output."
+	(println "Consize returns" out))
+
+(defn init
+	"Do resume or start based on passed parameters."
+	([cs ds dict] ;; Resume 
+		(first ((VM "apply") (first ((VM "func") dict cs)) ds)))
+	([args] ;; Start
+		(init (first (apply (VM "tokenize") ((VM "uncomment")
+				 	(reduce str (interpose " " args))))) () VM)))
+
+(defn pr-init [args]
+	"Do init with print."
+	(returns (init args)))

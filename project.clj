@@ -11,25 +11,33 @@
 								 [org.clojure/clojurescript "0.0-2138"]
 								 [org.clojure/core.async "0.1.267.0-0d7780-alpha"]
 								 [prismatic/dommy "0.1.2"]]
-	:plugins [[lein-cljsbuild "1.0.0-alpha2"]]
+	:plugins [[lein-cljsbuild "1.0.1"]
+						[lein-externs "0.1.3"]]
 	:cljsbuild {
+		:crossovers [consize.core]
 		:builds {
 			;; Generates a munged and compressed javascript file.
 			:deploy {
 				:source-paths ["src"]
 				:compiler {
-					:output-to "resources/public/js/consize.min.js"
+					:output-to "resources/public/js/consize.js"
+					:externs ["resources/externs.js"]
 					:optimizations :advanced
-					:externs ["externs.js"]
-					:pretty-print false}}
+					:pretty-print false
+					:warnings false}}
 			;; Generates a huge, readable javascript file including sourcemap.
 			:dev {
 				:source-paths ["src"]
 				:compiler {
-					:output-to "resources/public/js/consize.js"
-					:source-map "resources/public/js/consize.map"
-					:output-dir "resources/public/js/consize"
+					:output-to "resources/consize/out.js"
+					:source-map "resources/consize/sources.map"
+					:output-dir "resources/consize"
 					:optimizations :whitespace}}}}
 	:main consize.cli
-	:aliases {"bootstrapper" ["run" "-m" "consize.bootstrapper"]}
+	:aliases {"bootimage" 	 ["run" "\\ bootimage.txt run "],
+						"prelude"   	 ["run"	"\\ prelude.txt run "],
+						"prelude-dump" ["run"	"\\ prelude-dump.txt run "],
+						"prelude-test" ["run" "\\ prelude-dump.txt run test-prelude "],
+						"say-hi"			 ["run" "\\ prelude-dump.txt run say-hi "],
+						"bootstrapper" ["run" "-m" "consize.bootstrapper"]}
 	:min-lein-version "2.0.0")
