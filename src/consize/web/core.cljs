@@ -89,6 +89,7 @@
 										(concat args (conj *cs* "repl" "printer")) *ds* *dict*)
 									;; Start.
 									(consize/init args))]
+				;; When Consize exists
 				(when-not *resume*
 					(consize/printer out)
 					(reset-stacks)))))

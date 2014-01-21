@@ -33,7 +33,7 @@
 (defn init []
 	"Initialize repl on a dom and set print-fn."
 	(let [repl (.jqconsole (js/jQuery "#repl") greeting)]
-		(set-print-fn! #(.Write repl % nil false))
+		(set-print-fn! #(.Write repl %))
 		;; Workaround shortcuts for windows + chrome
 		(when (and (= (.-vendor js/navigator) "Google Inc.")
 							 (= (core/operating-system) "Windows"))

@@ -2,7 +2,7 @@
 	(:require [clojure.string :as string]
 						[clojure.java.io :as io]))
 
-(def path "resources/consize/")
+(def path "resources/")
 (def resources ["bootimage.txt" "prelude.txt"
 								"prelude-dump.txt" "prelude-test.txt"])
 (def destination "src/consize/web/bootstrap.cljs")
