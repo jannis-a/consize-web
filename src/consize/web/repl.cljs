@@ -38,7 +38,7 @@
 		(when (and (= (.-vendor js/navigator) "Google Inc.")
 							 (= (core/operating-system) "Windows"))
 			(show! (by-id "#shortcuts"))
-			(doseq [[code, char] {"54" "\\", "55" "{", "56" "[", "57" "]", "48" "}"}]
+			(doseq [[code, char] {"219" "\\", "55" "{", "56" "[", "57" "]", "48" "}"}]
 				(.RegisterShortcut repl code (fn []
 					(.SetPromptText repl (str (.GetPromptText repl) char))))))
 		;; Start new prompt.
