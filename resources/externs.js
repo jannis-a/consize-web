@@ -3,7 +3,6 @@ var TopLevel = {
 "CodeMirror" : function () {},
 "Date" : function () {},
 "document" : function () {},
-"Error" : function () {},
 "Focus" : function () {},
 "fromCharCode" : function () {},
 "getItem" : function () {},
@@ -26,7 +25,7 @@ var TopLevel = {
 "SetPromptText" : function () {},
 "setValue" : function () {},
 "String" : function () {},
-"userAgent" : function () {},
+"vendor" : function () {},
 "window" : function () {},
 "Write" : function () {}
 }
