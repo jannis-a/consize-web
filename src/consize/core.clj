@@ -5,11 +5,19 @@
 	^{:doc "Consize -- A concatenative programming language (when size matters)"
 	  :author "Dominikus Herzberg, Heilbronn University, Germany" }
   consize.core
+	;*CLJSBUILD-REMOVE*;(:require-macros [consize.web.macros :refer [save-stacks]])
   (:use [clojure.string :only (lower-case split trim)]))
 
 ;; Adding dynamic vars to bind platform specific functions.
-(doseq [var [char? read-string read-line slurp spit]]
-	(def ^:dynamic var))
+;; These comments will be removed by cljsbuild.
+;*CLJSBUILD-REMOVE*;(def ^:dynamic VM)
+;*CLJSBUILD-REMOVE*;(def ^:dynamic char?)
+;*CLJSBUILD-REMOVE*;(def ^:dynamic read-string)
+;*CLJSBUILD-REMOVE*;(def ^:dynamic read-line)
+;*CLJSBUILD-REMOVE*;(def ^:dynamic slurp)
+;*CLJSBUILD-REMOVE*;(def ^:dynamic spit)
+;*CLJSBUILD-REMOVE*;(def ^:dynamic Exception)
+;*CLJSBUILD-REMOVE*;(def ^:dynamic Error)
 (def ^:dynamic current-time-millis)
 (def ^:dynamic operating-system)
 
@@ -87,9 +95,9 @@
 	(conj r (reduce str (interpose "\r\n"
     (map second (re-seq #"[(\r\n)\r\n]%?>> (.*)[(\r\n)\r\n]" w)))))),
 
-;; Replaced functions with dynamic vars.
-"current-time-millis" (fn [& r] (conj r (str current-time-millis))),
-"operating-system" (fn [& r] (conj r (str operating-system))),
+;; Replaced functions with dynamic vars (for rebind).
+"current-time-millis" (fn [& r] (conj r (str (current-time-millis)))),
+"operating-system" (fn [& r] (conj r (str (operating-system)))),
 
 ;; Propper stack effects are secured by 'stepcc' before and after 'callcc' etc.
 ;; If used as functions the user is responsible to obey stack effects
@@ -127,6 +135,7 @@
 							((VM "stepcc") cs ds dict)
 							(catch Error     e (list (conj cs "error") ds dict))
 							(catch Exception e (list (conj cs "error") ds dict)))]
+						;*CLJSBUILD-REMOVE*;(save-stacks)
 						(recur cs' ds' dict'))))]
 			(fn [& ds] (runcc qt (sequence ds) dict))))),
 
@@ -144,18 +153,16 @@
 "run"  '("load" "call"),
 })
 
-(defn returns [out]
-	"Print the output."
+(defn printer [out]
+	"Print the return string."
 	(println "Consize returns" out))
 
 (defn init
 	"Do resume or start based on passed parameters."
-	([cs ds dict] ;; Resume 
-		(first ((VM "apply") (first ((VM "func") dict cs)) ds)))
-	([args] ;; Start
-		(init (first (apply (VM "tokenize") ((VM "uncomment")
-				 	(reduce str (interpose " " args))))) () VM)))
+	([cs ds dict] (first ((VM "apply") (first ((VM "func") dict cs)) ds)))
+	([args] (init (first (apply (VM "tokenize") ((VM "uncomment")
+				 				(reduce str (interpose " " args))))) () VM)))
 
-(defn pr-init [args]
-	"Do init with print."
-	(returns (init args)))
+(defn returns [args]
+	"Run Consize and print return string."
+	(printer (init args)))

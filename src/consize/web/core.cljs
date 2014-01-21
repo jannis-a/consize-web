@@ -1,5 +1,6 @@
 (ns consize.web.core
 	(:use [clojure.string :only [split]])
+	(:require-macros [consize.web.macros :refer [save-stacks]])
 	(:require [cljs.reader :as reader]
 						[consize.core :as consize]
 						[consize.web.filesystem :as fs]))
@@ -70,37 +71,17 @@
 	(set! *ds* nil)
 	(set! *dict* nil))
 
-;; Replace VM word "func".
-(def VM (assoc consize/VM
-	"func" (fn [dict qt & r] {:pre [(map? dict) (seq? qt)]} ; function constructor
-		(conj r
-			(let [runcc
-				(fn [cs ds dict]
-					(if (empty? cs)
-						ds
-						(let [[cs' ds' dict']
-							(try
-								((VM "stepcc") cs ds dict)
-								(catch :default e (list (conj cs "error") ds dict)))]
-							(when *resume* ;; Get stacks if resume.
-								(set! *cs* cs')
-								(set! *ds* ds')
-								(set! *dict* dict'))
-							(recur cs' ds' dict'))))]
-				(fn [& ds] (runcc qt (sequence ds) dict)))))))
-
 (defn init [args]
 	"Run Consize. If stacks are not set, do initially run else do continuation."
 	(set! *resume* false)
 	;; Bind functions in consize.core namespace to the new ones.
-	(binding [consize/VM VM
-						consize/char? char?
+	(binding [consize/char? char?
 						consize/read-string read-string
 						consize/read-line read-line
 						consize/slurp fs/slurp
 						consize/spit fs/spit
-						consize/current-time-millis (current-time-millis)
-						consize/operating-system (operating-system)]
+						consize/current-time-millis current-time-millis
+						consize/operating-system operating-system]
 			(let [args (split args #"\s+")
 						out (if (or *cs* *ds* *dict*)
 									;; Resume.
@@ -109,5 +90,5 @@
 									;; Start.
 									(consize/init args))]
 				(when-not *resume*
-					(consize/returns out)
+					(consize/printer out)
 					(reset-stacks)))))
