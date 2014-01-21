@@ -854,7 +854,7 @@ Licensed under the MIT license
       key = event.keyCode || event.which;
       setTimeout($.proxy(this._CheckMatchings, this), 0);
       if (event.altKey) {
-        return this._HandleCtrlShortcut(key);
+        return this._HandleAltShortcut(key);
       } else if (event.ctrlKey || event.metaKey) {
         return this._HandleCtrlShortcut(key);
       } else if (event.shiftKey) {
@@ -924,6 +924,34 @@ Licensed under the MIT license
         }
         return false;
       }
+    };
+
+    JQConsole.prototype._HandleAltShortcut = function(key) {
+      var handler, _i, _len, _ref;
+      switch (key) {
+        case 219:
+          return '\\';
+        case 55:
+          return '[';
+        case 56:
+          return '{';
+        case 57:
+          return '}';
+        case 48:
+          return ']';
+        default:
+          if (key in this.shortcuts) {
+            _ref = this.shortcuts[key];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              handler = _ref[_i];
+              handler.call(this);
+            }
+            return false;
+          } else {
+            return true;
+          }
+      }
+      return false;
     };
 
     JQConsole.prototype._HandleCtrlShortcut = function(key) {
