@@ -6,6 +6,7 @@
 						[consize.web.core :as core :refer [*resume*]]))
 
 ;; REPL defaults.
+(def fix-shortcuts {"\\" "219", "{" "55", "[" "56", "]" "57", "}" "48"})
 (def greeting "Welcome to Consize Web! Please enter your start command:\n")
 (def default-cmd "\\ prelude-dump.txt run say-hi")
 
@@ -20,14 +21,14 @@
 	 (when-not *resume* (println))
 	 (doto repl
 		 (.SetPromptLabel (if *resume* "" "# "))
-		 (.Prompt "true"
-			(fn [args] (go (toggle-state)
-										 (<! (timeout 15)) ;; Without delay toggle not visible.
-										 (core/init args)
-										 (toggle-state)
-										 (start-prompt repl))))
-		 (.Focus))
-	 (when default (.SetPromptText repl default)))
+		 (.Prompt "true" (fn [args]
+		 	 (go (toggle-state)
+					 (<! (timeout 15)) ;; Without delay toggle not visible.
+					 (core/init args)
+					 (toggle-state)
+					 (start-prompt repl))))
+		 (.SetPromptText (or default ""))
+		 (.Focus)))
 	([repl] (start-prompt repl nil)))
 
 (defn init []
@@ -38,7 +39,7 @@
 		(when (and (= (.-vendor js/navigator) "Google Inc.")
 							 (= (core/operating-system) "Windows"))
 			(show! (by-id "#shortcuts"))
-			(doseq [[code, char] {"219" "\\", "55" "{", "56" "[", "57" "]", "48" "}"}]
+			(doseq [[char, code] fix-shortcuts]
 				(.RegisterShortcut repl code (fn []
 					(.SetPromptText repl (str (.GetPromptText repl) char))))))
 		;; Start new prompt.

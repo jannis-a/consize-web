@@ -2,14 +2,14 @@
 ;;; Copyright (c) 2013, Dominikus Herzberg, Heilbronn University, Germany
 ;;; New BSD License: http://opensource.org/licenses/BSD-3-Clause
 (ns
-	^{:doc "Consize -- A concatenative programming language (when size matters)"
-	  :author "Dominikus Herzberg, Heilbronn University, Germany" }
-  consize.core
+	^{:doc    "Consize -- A concatenative programming language (when size matters)"
+		:author "Dominikus Herzberg, Heilbronn University, Germany"}
+	consize.core
 	;*CLJSBUILD-REMOVE*;(:require-macros [consize.web.macros :refer [save-stacks]])
-  (:use [clojure.string :only (lower-case split trim)]))
+	(:use [clojure.string :only (lower-case split trim)]))
 
 ;; Adding dynamic vars to bind platform specific functions.
-;; These comments will be removed by cljsbuild.
+;; These comments will be removed by cljsbuild (expr after will be evaluated).
 ;*CLJSBUILD-REMOVE*;(def ^:dynamic VM)
 ;*CLJSBUILD-REMOVE*;(def ^:dynamic char?)
 ;*CLJSBUILD-REMOVE*;(def ^:dynamic read-string)

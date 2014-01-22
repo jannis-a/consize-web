@@ -1,0 +1,36 @@
+<component name="libraryTable">
+  <library name="Generated files" type="javaScript">
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/resources/jq-console/test/ansi-test.js" />
+        <item url="file://$PROJECT_DIR$/resources/jq-console/test/setup.js" />
+        <item url="file://$PROJECT_DIR$/resources/jqconsole/test/ansi-test.js" />
+        <item url="file://$PROJECT_DIR$/resources/jqconsole/test/setup.js" />
+        <item url="file://$PROJECT_DIR$/resources/jqconsole/test/history-test.js" />
+        <item url="file://$PROJECT_DIR$/resources/jq-console/test/prompt-test.js" />
+        <item url="file://$PROJECT_DIR$/resources/jqconsole/test/jqconsole-test.js" />
+        <item url="file://$PROJECT_DIR$/resources/jq-console/test/shortcuts-test.js" />
+        <item url="file://$PROJECT_DIR$/resources/jqconsole/test/prompt-test.js" />
+        <item url="file://$PROJECT_DIR$/resources/jq-console/test/jqconsole-test.js" />
+        <item url="file://$PROJECT_DIR$/resources/jqconsole/test/shortcuts-test.js" />
+        <item url="file://$PROJECT_DIR$/resources/jq-console/test/history-test.js" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/resources/jq-console/test/ansi-test.js" />
+      <root url="file://$PROJECT_DIR$/resources/jq-console/test/setup.js" />
+      <root url="file://$PROJECT_DIR$/resources/jq-console/test/prompt-test.js" />
+      <root url="file://$PROJECT_DIR$/resources/jq-console/test/shortcuts-test.js" />
+      <root url="file://$PROJECT_DIR$/resources/jq-console/test/jqconsole-test.js" />
+      <root url="file://$PROJECT_DIR$/resources/jq-console/test/history-test.js" />
+      <root url="file://$PROJECT_DIR$/resources/jqconsole/test/ansi-test.js" />
+      <root url="file://$PROJECT_DIR$/resources/jqconsole/test/setup.js" />
+      <root url="file://$PROJECT_DIR$/resources/jqconsole/test/history-test.js" />
+      <root url="file://$PROJECT_DIR$/resources/jqconsole/test/jqconsole-test.js" />
+      <root url="file://$PROJECT_DIR$/resources/jqconsole/test/prompt-test.js" />
+      <root url="file://$PROJECT_DIR$/resources/jqconsole/test/shortcuts-test.js" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

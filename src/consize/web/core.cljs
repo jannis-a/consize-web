@@ -1,9 +1,8 @@
 (ns consize.web.core
 	(:use [clojure.string :only [split]])
-	(:require-macros [consize.web.macros :refer [save-stacks]])
 	(:require [cljs.reader :as reader]
 						[consize.core :as consize]
-						[consize.web.filesystem :as fs]))
+						[consize.web.filesystem :refer [slurp spit]]))
 
 ;; Consize stacks, used for fast continuation instead of using Consize words.
 (def *cs*)
@@ -49,9 +48,8 @@
 					(= c "\\u") 16)))
 
 (defn convert-unicode [s]
-	"Converts a octal or hexadecimal character to it's symbol."
-	(.fromCharCode js/String
-		(js/parseInt (subs s 2) (unicode? s))))
+	"Converts a octal or hexadecimal unicode character to it's symbol."
+	(.fromCharCode js/String (js/parseInt (subs s 2) (unicode? s))))
 
 (defn read-string [s]
 	"Workaround for broken read-string from ClojureScript."
@@ -78,18 +76,16 @@
 	(binding [consize/char? char?
 						consize/read-string read-string
 						consize/read-line read-line
-						consize/slurp fs/slurp
-						consize/spit fs/spit
+						consize/slurp slurp
+						consize/spit spit
+						consize/Error :default
+						consize/Exception :default
 						consize/current-time-millis current-time-millis
 						consize/operating-system operating-system]
-			(let [args (split args #"\s+")
-						out (if (or *cs* *ds* *dict*)
-									;; Resume.
-									(consize/init
-										(concat args (conj *cs* "repl" "printer")) *ds* *dict*)
-									;; Start.
-									(consize/init args))]
-				;; When Consize exists
-				(when-not *resume*
-					(consize/printer out)
-					(reset-stacks)))))
+		(let [args (split args #"\s+")
+					*cs* (concat args (conj *cs* "repl" "printer"))
+					out (apply consize/init (if *dict* [*cs* *ds* *dict*] [args]))]
+			;; Print and reset stacks on exit.
+			(when-not *resume*
+				(consize/printer out)
+				(reset-stacks)))))
